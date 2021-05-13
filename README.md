@@ -9,13 +9,12 @@
 
 ## REST API
 
-1. Project Overview: Car Insurance Quote
-2. Scaffold project via the CLI
-3. Project structure
-4. NestJS Modules
-5. Creating a Car Insurance Quote module
-6. Creating our first controller
-7. Endpoint to save car insurance quotes
+1. [Scaffold Project via the CLI](./docs/02-rest-api.md)
+2. [Project Structure](./docs/02-rest-api.md)
+3. [NestJS Modules](./docs/02-rest-api.md)
+4. [Creating a Car Insurance Quote Module](./docs/02-rest-api.md)
+5. [Creating our First Controller](./docs/02-rest-api.md)
+6. [Endpoint to save car insurance quotes](./docs/02-rest-api.md)
 
 ## Pipes and Validations
 

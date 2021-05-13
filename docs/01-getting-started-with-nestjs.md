@@ -79,7 +79,7 @@ We will use it to scaffold our project, serve it and build and bundle the applic
 Let's first install it. Again globally into our current `Node.js` version.
 
 ```sh
-$ npm i -g @nestjs/cli
+npm i -g @nestjs/cli
 ```
 
 Let's verify that it works.
@@ -92,7 +92,7 @@ This will list all the commands you can execute via the NestJS CLI. We will be u
 
 ## What we'll be building in this course
 
-We will be creating an API to calculate car insurance quotes.
+We will be creating an API to calculate car insurance quotes for a fictional company called `Acme`.
 
 To calculate a car insurance quote we require 3 input parameters.
 
