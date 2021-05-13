@@ -291,4 +291,15 @@ Using another HTTP verb will result in a `404` status code being returned.
 {"statusCode":404,"message":"Cannot GET /api/quote/calculate","error":"Not Found"}%
 ```
 
+The response status code is always `200` by default, except for `POST` requests which default to `201`. You can change the returned status code by applying the `@HttpCode()` decorator to the controller method.
+
+```ts
+@Post('calculate')
+@HttpCode(201)
+public async post(): Promise<any> {
+  return 'hello, world!';
+}
+```
+
+
 Of course, if we really want to calculate a car insurance quote we need to send some data along with the request and validate it. Let's do this in the next module [Pipes and Validations](./03-pipes-and-validations.md).

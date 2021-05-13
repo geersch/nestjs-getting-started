@@ -106,7 +106,7 @@ Some business rules apply.
 - the value of the car must be 5.000 € or greater
 - the minimum age of the driver can be different per car (e.g. car insurance is not provided for drivers younger than 25 for a Porsche)
 
-Let's keep the rest simple and let's assume that the price of the car insurance is a fixed price per car brand.
+Let's keep the rest simple and let's assume that the price of the car insurance is a fixed price per car brand. We should return a response that includes the yearly and monthly (yearly / 12) price.
 
 * `BMW`: 150 € / year
 * `Skoda`: 100  €  / year

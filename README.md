@@ -14,13 +14,13 @@
 3. [NestJS Modules](./docs/02-rest-api.md)
 4. [Creating a Car Insurance Quote Module](./docs/02-rest-api.md)
 5. [Creating our First Controller](./docs/02-rest-api.md)
-6. [Endpoint to save car insurance quotes](./docs/02-rest-api.md)
+6. [Endpoint to Save Car Insurance Quotes](./docs/02-rest-api.md)
 
-## Pipes and Validations
+## Pipes: Validations & Transformations
 
-1. What are Pipes
-2. How does the ValidationPipe work
-3. Validating request payload
+1. [What are Pipes?](./docs/03-pipes-validations-and-transformations.md)
+2. [Validate the Car Insurance Quote Payload](./docs/03-pipes-validations-and-transformations.md)
+3. [Transforming the Payload](./docs/03-pipes-validations-and-transformations.md)
 
 ## OpenAPI Specification
 
