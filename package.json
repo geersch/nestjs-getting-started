@@ -1,0 +1,19 @@
+{
+  "name": "nestjs-course",
+  "version": "1.0.0",
+  "description": "Getting Started with NestJS",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geersch/nestjs-course.git"
+  },
+  "author": "Christophe Geers",
+  "homepage": "https://github.com/geersch/nestjs-course#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
+    "husky": "^6.0.0"
+  }
+}
