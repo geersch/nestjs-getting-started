@@ -24,10 +24,10 @@
 
 ## OpenAPI Specification
 
-1. Setting up Swagger
-2. Decorating DTO Properties
-3. Decorating Controller Methods
-4. Grouping Resources with Tags
+1. [Setting up Swagger](./docs/04-openapi-specification.md)
+2. [Decorating Controller Methods](./docs/04-openapi-specification.md)
+3. [Decorating DTO Properties](./docs/04-openapi-specification.md)
+4. [Grouping Resources with Tags](./docs/04-openapi-specification.md)
 
 ## Middleware
 

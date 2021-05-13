@@ -184,7 +184,7 @@ When a car insurance quote is submitted we persist it and assign a unique ID to 
 We also use DTOs to return responses. Let's declare a DTO to contain the response. Add a new file called `car-insurance-quote.response.dto` to the `dtos` folder and add the following code to it.
 
 ```ts
-export interface CarInsuranceQuoteResponseDto {
+export class CarInsuranceQuoteResponseDto {
   monthlyPrice: number;
   yearlyPrice: number;
 }
