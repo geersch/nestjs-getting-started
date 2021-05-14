@@ -43,23 +43,11 @@
 1. [The Rules](./docs/06-business-logic.md)
 2. [Quote Service](./docs/06-business-logic.md)
 
-## Middleware
-
-1. What is Middleware
-2. Applying Middleware
-3. Functional Middleware
-
 ## Exception Filters
 
-1. What is an ExceptionFilter 
-2. Catch Exception with Filters
+1. What is an ExceptionFilter?
+2. Catch Exceptions with Filters
 2. Binding Filters
-
-## Interceptors
-
-1. What is an Interceptor
-2. Stripping `null` values with a custom Interceptor
-3. Binding Interceptors
 
 ## Add PostgreSQL with Knex
 
@@ -71,8 +59,8 @@
 
 ## Other Building Blocks
 
-1. More NestJS Features
+1. [Other Building Blocks](./docs/09-other-building-blocks.md)
 
-## It's Quiz Time
+## Quiz
 
 1. Kahoot
