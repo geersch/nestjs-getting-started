@@ -38,6 +38,11 @@
 5. [Guards](./docs/05-authentication.md)
 6. [Swagger UI](./docs/05-authentication.md)
 
+## Business Logic
+
+1. [The Rules](./docs/06-business-logic.md)
+2. [Quote Service](./docs/06-business-logic.md)
+
 ## Middleware
 
 1. What is Middleware

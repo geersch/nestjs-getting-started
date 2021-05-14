@@ -185,8 +185,9 @@ We also use DTOs to return responses. Let's declare a DTO to contain the respons
 
 ```ts
 export class CarInsuranceQuoteResponseDto {
-  monthlyPrice: number;
-  yearlyPrice: number;
+  id: number;
+  monthlyPremium: number;
+  yearlyPremium: number;
 }
 ```
 
@@ -204,8 +205,9 @@ public async getById(
   console.log(typeof id);
 
   return {
-    monthlyPrice: 10,
-    yearlyPrice: 120,
+    id: 1,
+    monthlyPremium: 10,
+    yearlyPremium: 120,
   };
 }
 ```
@@ -221,7 +223,7 @@ If we pass a valid value it will return a `200 OK` response code and the hardcod
 
 ```sh
 ❯ curl --location --request GET 'http://localhost:3000/api/quote/1'
-{"monthlyPrice":10,"yearlyPrice":120}%
+{"monthlyPremium":10,"yearlyPremium":120}%
 ```
 
 You'll notice that the output of `console.log(typeof id)` is `number` indicating the `ParseIntPipe` successfully transformed the route parameter.
