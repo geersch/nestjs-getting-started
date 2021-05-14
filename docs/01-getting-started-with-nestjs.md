@@ -115,4 +115,4 @@ Let's keep the rest simple and let's assume that the price of the car insurance 
 * `Porsche`: 500  € / year
 ( ...etc.)
 
-Only authenticated users should be able to calculate car insurance quotes.
+Only authenticated users should be able to calculate and retrieve car insurance quotes.

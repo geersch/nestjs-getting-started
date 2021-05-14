@@ -29,6 +29,15 @@
 3. [Decorating DTO Properties](./docs/04-openapi-specification.md)
 4. [Grouping Resources with Tags](./docs/04-openapi-specification.md)
 
+## Authentication
+
+1. [Passport](./docs/05-authentication.md)
+2. [Local Passport Strategy](./docs/05-authentication.md)
+3. [JSON Web Token](./docs/05-authentication.md)
+4. [JWT Passport Strategy](./docs/05-authentication.md)
+5. [Guards](./docs/05-authentication.md)
+6. [Swagger UI](./docs/05-authentication.md)
+
 ## Middleware
 
 1. What is Middleware
@@ -46,15 +55,6 @@
 1. What is an Interceptor
 2. Stripping `null` values with a custom Interceptor
 3. Binding Interceptors
-
-## Authentication
-
-1. Introduction to Passport
-2. Passport Strategies
-3. Local Passport Strategy
-4. JWT Passport Strategy
-5. Guard
-6. Protecting Routes with Guards
 
 ## Dependency Injection
 
