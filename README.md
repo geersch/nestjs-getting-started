@@ -51,11 +51,10 @@
 
 ## Add PostgreSQL with Knex
 
-1. Prerequisite: Install Docker
-2. Running PostgreSQL in a Docker container
-3. Introducing Knex
-4. Persisting the Car Insurance Quotes
-5. Swapping out the Infrastructure
+1. [Prerequisite: Install Docker](./docs/08-add-postgresql-with-knex.md)
+2. [Running PostgreSQL in a Docker Container](./docs/08-add-postgresql-with-knex.md)
+3. [Introducing Knex](./docs/08-add-postgresql-with-knex.md)
+4. [Persisting the Car Insurance Quotes](./docs/08-add-postgresql-with-knex.md)
 
 ## Other Building Blocks
 
