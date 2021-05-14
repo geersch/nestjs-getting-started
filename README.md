@@ -45,9 +45,9 @@
 
 ## Exception Filters
 
-1. What is an ExceptionFilter?
-2. Catch Exceptions with Filters
-2. Binding Filters
+1. [What is an Exception Filter?](./docs/07-exception-filters.md)
+2. [Catching Custom Exceptions with Filters](./docs/07-exception-filters.md)
+2. [Binding Filters](./docs/07-exception-filters.md)
 
 ## Add PostgreSQL with Knex
 
