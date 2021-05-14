@@ -56,16 +56,6 @@
 2. Stripping `null` values with a custom Interceptor
 3. Binding Interceptors
 
-## Dependency Injection
-
-1. Understanding Dependency Injection
-2. NestJS Module Encapsulation
-3. Providers
-4. Value based Providers
-5. Class Providers
-6. Factory Providers
-7. Injection Tokens
-
 ## Add PostgreSQL with Knex
 
 1. Prerequisite: Install Docker
