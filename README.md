@@ -59,7 +59,3 @@
 ## Other Building Blocks
 
 1. [Other Building Blocks](./docs/09-other-building-blocks.md)
-
-## Quiz
-
-1. Kahoot
