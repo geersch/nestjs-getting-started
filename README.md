@@ -1,5 +1,7 @@
 # NestJS: Getting Started
 
+The NestJS application accompanying this course can be found inside the `acme-api` folder.
+
 ## Getting Started with NestJS
 
 1. [What is NestJS?](./docs/01-getting-started-with-nestjs.md)
