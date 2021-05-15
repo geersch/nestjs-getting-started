@@ -82,12 +82,12 @@ NestJS is database agnostic, allowing you to easily integrate with any SQL or No
 In order to work with `Knex.js` and `PostgreSQL` we need to install a few packages.
 
 ```ts
- yarn add knex pg nestjs-knex
+ yarn add pg knex nestjs-knex
  ```
 
- **Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application you might want to write your own NestJS package to integrate Knex.
+ **Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application you might want to write your own NestJS package to integrate Knex. This package is not frequently updated, making it troublesome to update `Knex.js`.
 
- After installing the `nestjs-knex` we need to import it into our application's root module. Open the `app.module.file` and modify it as listed below.
+ After installing the `nestjs-knex` package we need to import it into our application's root module. Open the `app.module.file` and modify it as listed below.
 
  ```ts
 import { Module } from '@nestjs/common';
@@ -142,9 +142,9 @@ export abstract class CarInsuranceQuoteRepository {
 }
 ```
 
-We declare a simple repository contract using an abstract class. A cool feature of JavaScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript is able to extract the interface from the abstract class. The repository allows us to save and load car insurance quotes. 
+We declare a simple repository contract using an abstract class. A cool feature of TypeScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript is able to extract the interface from the abstract class. The repository allows us to save and load car insurance quotes. 
 
-Let's implement a Knex specific implementation of this abstract class. Add a file called `knex-car-insurance-quote.repository.ts` in the same folder as the abstract class. It contains the following code:
+Let's implement a Knex specific implementation of this abstract class. Add a file called `knex-car-insurance-quote.repository.ts` to the folder containing the abstract class. It contains the following code:
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -209,9 +209,9 @@ export class KnexCarInsuranceQuoteRepository
 }
 ```
 
-Via the `@InjectKnex()` decorator provided by the `nestjs-knex` package we inject a `Knex` instance that allows us to work with the database via Knex. The implementation for the `save()` and `load()` methods use this instance to persist and retrieve the car insurance quotes.
+Via the `@InjectKnex()` decorator provided by the `nestjs-knex` package we inject a `Knex` instance that allows us to work with the database via `Knex.js`. The implementation for the `save()` and `load()` methods use this instance to persist and retrieve the car insurance quotes.
 
-Now that we provided an implementation for the abstract `CarInsuranceQuoteRepository` class we need to register it in NestJS's dependency injection system. We are going to register it in the car insurance quote module so open the `car-insurance-quote.module.ts` file. All we need to do is to add another provider that instructs NestJS to supply an instance of the `KnexCarInsuranceQuoteRepository` class whenever a `CarInsuranceQuoteRepository` is requested.
+Now that we provided an implementation for the abstract `CarInsuranceQuoteRepository` class we need to register it in NestJS's dependency injection system. We are going to register it in the car insurance quote module, so open the `car-insurance-quote.module.ts` file. We need to add a provider that instructs NestJS to supply an instance of the `KnexCarInsuranceQuoteRepository` class whenever a `CarInsuranceQuoteRepository` is injected.
 
 ```ts
 @Module({
@@ -228,7 +228,7 @@ Now that we provided an implementation for the abstract `CarInsuranceQuoteReposi
 export class CarInsuranceQuoteModule {}
 ```
 
-We are almost there. The only thing left is to update the quote service (`quote.service.ts`) to use the new repository to save and load the quotes.
+We are almost there. The only thing left to do is to update the quote service (`quote.service.ts`) to use the new repository to save and load the quotes.
 
 First inject the repository via the service's constructor.
 
@@ -296,4 +296,4 @@ export class QuoteService {
 
 ```
 
-Voila, the quotes are now persists in the database. Start the application, open a browser and navigate to http://localhost:3000/api and use the Swagger UI to test it. Yay, we now have a data store that holds our car insurance quotes.
+Voila, the quotes are now persisted in the database. Start the application, open a browser and navigate to http://localhost:3000/api and use the Swagger UI to test it. Yay, the car insurance quotes are now persisted in a database!
