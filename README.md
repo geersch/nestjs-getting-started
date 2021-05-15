@@ -7,7 +7,7 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 1. [What is NestJS?](./docs/01-getting-started-with-nestjs.md)
 1. [Prerequisites](./docs/01-getting-started-with-nestjs.md)
 1. [NestJS CLI](./docs/01-getting-started-with-nestjs.md)
-1. [What we'll be building in this course](./docs/01-getting-started-with-nestjs.md)
+1. [What We'll Be Building in this Course](./docs/01-getting-started-with-nestjs.md)
 
 ## REST API
 
