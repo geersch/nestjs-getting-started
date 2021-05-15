@@ -2,11 +2,11 @@
 
 ## What is NestJS?
 
-NestJS or Nest is a framework for building efficient, scalable `Node.js` server-side applications. It uses progressive JavaScript, is built with and fully supports `TypeScript` (yet still enables developers to code in pure JavaScript) and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).
+NestJS or Nest is a framework for building efficient, scalable `Node.js` server-side applications. It uses progressive JavaScript, is built with and fully supports `TypeScript` (yet still enables developers to code in pure JavaScript), and combines elements of OOP (Object Oriented Programming), FP (Functional Programming), and FRP (Functional Reactive Programming).
 
 Under the hood, NestJS makes use of robust HTTP server frameworks like `Express` (the default) and optionally can be configured to use `Fastify` as well!
 
-NestJS provides a level of abstraction above these common `Node.js` frameworks, but also exposes their APIs directly to the developer. This gives developers the freedom to use the myriad of third-party modules which are available for the underlying platform.
+NestJS provides a level of abstraction above these common `Node.js` frameworks but also exposes their APIs directly to the developer. This gives developers the freedom to use the myriad of third-party modules which are available for the underlying platform.
 
 It is written in TypeScript and its structure, especially the modules and dependency injection system, is familiar to Angular.
 
@@ -33,7 +33,7 @@ To verify that `NVM` has been installed, execute:
 nvm -v
 ```
 
-Let's use `Node.js` 12 LTS. It's codename is `Erbium`.
+Let's use `Node.js` 12 LTS. Its codename is `Erbium`.
 
 https://nodejs.org/en/about/releases/
 
@@ -66,7 +66,7 @@ Did that work?
 yarn -v
 ```
 
-Of course, to write code you also need an IDE. You are free to choose you favorite one, but for this course I'll be using [Visual Studio Code](https://code.visualstudio.com/).
+Of course, to write code you also need an IDE. You are free to choose your favorite one, I'll be using [Visual Studio Code](https://code.visualstudio.com/).
 
 ## NestJS CLI
 
@@ -74,7 +74,7 @@ The NestJS CLI is a command-line interface tool that helps you to initialize, de
 
 https://github.com/nestjs/nest-cli
 
-We will use it to scaffold our project, serve it and build and bundle the application for production distribution.
+We will use it to scaffold our project, serve it and build and bundle the application for distribution.
 
 Let's first install it, again globally into our current `Node.js` version.
 

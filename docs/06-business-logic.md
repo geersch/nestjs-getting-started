@@ -16,7 +16,7 @@ Some business rules apply.
 - the value of the car must be 5.000 € or greater
 - the minimum age of the driver can be different per car (e.g. car insurance is not provided for drivers younger than 25 for a Porsche)
 
-Let's keep the rest simple and let's assume that the price of the car insurance is a fixed price per car brand. We should return a response that includes the yearly and monthly (yearly / 12) price.
+Let's keep the rest simple and let's assume that the price of the car insurance is a fixed price per car brand. We should return a response that includes the yearly and monthly (yearly / 12) premiums.
 
 * `BMW`: 150 € / year
 * `Skoda`: 100  €  / year
@@ -33,7 +33,7 @@ Let's start by adding a quote service to the car insurance quote module.
 nest g s quote car-insurance-quote --no-spec --flat
 ```
 
-At the moment we don't have a database yet, we'll get to that in a later module. For now we'll still store our data in-memory. Let's create a simple in-memory repository to store information about the car brands. Add a new folder called `repositories` to the car insurance quote module and add a file called `car-brand.repository.ts` to it. Add the following code to it:
+At the moment we don't have a database yet, we'll get to that in a later module. For now, we'll still store our data in memory. Let's create a simple in-memory repository to store information about the car brands. Add a new folder called `repositories` to the car insurance quote module and add a file called `car-brand.repository.ts` to it. Add the following code to it:
 
 ```ts
 export interface CarBrand {
@@ -56,7 +56,7 @@ export class CarBrandRepository {
 }
 ```
 
-Configure the `CarBrandRepository` as a provider in the car insurance quote module so that we can inject it in the quote service.
+Configure the `CarBrandRepository` as a provider in the car insurance quote module so that we can inject it into the quote service.
 
 ```ts
 import { Module } from '@nestjs/common';
@@ -83,7 +83,7 @@ export class BusinessRuleViolation extends Error {}
 
 `driver-too-young.error.ts`
 
-Error which is thrown if the driver is too young to be insured.
+The error is thrown if the driver is too young to be insured.
 
 ```ts
 import { BusinessRuleViolation } from './busisness-rule-validation.error';
@@ -93,7 +93,7 @@ export class DriveTooYoungError extends BusinessRuleViolation {}
 
 `purchase-price-too-low.error.ts`
 
-Error which is thrown if the purchase price of the car is too low.
+The error is thrown if the purchase price of the car is too low.
 
 ```ts
 import { BusinessRuleViolation } from './busisness-rule-validation.error';
@@ -103,7 +103,7 @@ export class PurchasePriceTooLowError extends BusinessRuleViolation {}
 
 `risk-too-high.error.ts`
 
-Error which is thrown if the risk is too high to ensure (e.g. driver to young for a particular brand).
+The error is thrown if the risk is too high to ensure (e.g. driver too young for a particular brand).
 
 ```ts
 import { BusinessRuleViolation } from './busisness-rule-validation.error';
@@ -113,7 +113,7 @@ export class RiskTooHighError extends BusinessRuleViolation {}
 
 `unknown-car-brand.error.ts`
 
-Error which is thrown if an unknown car brand is specified.
+The error is thrown if an unknown car brand is specified.
 
 ```ts
 import { BusinessRuleViolation } from './busisness-rule-validation.error';
@@ -121,13 +121,13 @@ import { BusinessRuleViolation } from './busisness-rule-validation.error';
 export class UnknownCarBrandError extends BusinessRuleViolation {}
 ```
 
-Now let's implement our quote service. The code is simple and straighforward. We inject the `CarBrandRepository` via the constructor and implement the `calculatePremium()` method. This method receives three parameters:
+Now let's implement our quote service. The code is simple and straightforward. We inject the `CarBrandRepository` via the constructor and implement the `calculatePremium()` method. This method receives three parameters:
 
 * age of the driver
 * ID of the car brand
 * purchase price of the car
 
-The method verifies the business rules and throws one of the errors we created earlier if one them is violated. If the validation succeeds, then a premium is calculated and stored in-memory. Calculated premiums can later be retrieved via the `findById()` method.
+The method verifies the business rules and throws one of the errors we created earlier if one of them is violated. If the validation succeeds, then a premium is calculated and stored in memory. Calculated premiums can later be retrieved via the `findById()` method.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -193,7 +193,7 @@ export class QuoteService {
 }
 ```
 
-**Remark**: This course is not about writing business logic. In a real-world application you would tackle this in a different way. Perhaps the domain is complex enough to warrant applying domain-driven design (DDD). In that case you could model the domain, introduce entities, value objects, aggregrates...etc. For our purposes we want a simple solution which does not distracts us from the main goal of the course.
+**Remark**: This course is not about writing business logic. In a real-world application, you would tackle this differently. Perhaps the domain is complex enough to warrant applying domain-driven design (DDD). In that case, you could model the domain, introduce entities, value objects, aggregates...etc. For our purpose, we want a simple solution that does not distract us from the main goal of the course.
 
 The last thing we need to do is to inject the quote service in the controller and update the route handlers.
 
@@ -238,12 +238,12 @@ export class QuoteController {
 }
 ```
 
-Voila, now we can calculate a car insurance quote premium and retrieve it later. Both route handlers now return a `CarInsuranceQuoteResponseDto` instance. In this case we can return the `Premium` instance returned by the quote service because the shape of this object matches with the `CarInsuranceQuoteResponseDto` response DTO. In other cases you might need to map the result of the service to the response DTO. 
+Voila, now we can calculate a car insurance quote premium and retrieve it later. Both route handlers now return a `CarInsuranceQuoteResponseDto` instance. In this case, we can return the `Premium` instance returned by the quote service because the shape of this object matches with the `CarInsuranceQuoteResponseDto` response DTO. In other cases, you might need to map the result of the service to the response DTO. 
 
 Testing our route handlers, we notice a few things:
 
 - Calculating a car insurance quote now works. Yay!
 - If a premium cannot be found a `404` response is returned.
-- If you calculate a car insurance quote and one of the business rules is violated, then you will get a `500 Internal server error` response. In the next chapter `Exception Filters` we'll see how to fix this.
+- If you calculate a car insurance quote and the business rules are violated, then you will get a `500 Internal server error` response. In the next chapter `Exception Filters` we'll see how to fix this.
 
 That's it for our simple car insurance quote service. Let's fix the response from the server when the business rules are violated next.

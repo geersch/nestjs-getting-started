@@ -2,7 +2,7 @@
 
 ## Setting up Swagger
 
-Up until now we've used `cURL` requests to send requests to our back-end API. It's a little bit cumbersome to compose the requests in this fashion. Let's make life a bit easier.
+Up until now, we've used `cURL` requests to send requests to our back-end API. It's a little bit cumbersome to compose the requests in this fashion. Let's make life a bit easier.
 
 The [OpenAPI Specification (OAS)](https://swagger.io/specification) is a standard, language-agnostic interface to RESTful APIs which allows both humans and computers to discover and understand the capabilities of the service without access to the source code, documentation, or through network inspection. When properly defined, a consumer can understand and interact with the remote service with a minimal amount of implementation logic.
 
@@ -111,7 +111,7 @@ export class QuoteController {
 }
 ```
 
-Using decorators such as `@ApiCreatedResponse()` and `@ApiOkResponse()` we can provide extra metadata for the OpenAPI document generation. The `@nestjs/swagger` packages provides many more decorators to help you tweak the document generation.
+Using decorators such as `@ApiCreatedResponse()` and `@ApiOkResponse()` we can provide extra metadata for the OpenAPI document generation. The `@nestjs/swagger` package provides many more decorators to help you tweak the document generation.
 
 * `@ApiOkResponse()`
 * `@ApiCreatedResponse()`
@@ -190,13 +190,13 @@ export class CarInsuranceQuoteResponseDto {
 }
 ```
 
-Using the metadata we provided via the decorators the `SwaggerModule` is able to generate a document supplying example data for our requests. This makes it very easy to call our endpoints via the Swagger UI to test them.
+Using the metadata we provided via the decorators the `SwaggerModule` can generate a document supplying example data for our requests. This makes it very easy to call our endpoints via the Swagger UI to test them.
 
 ![Swagger UI with extra Metadata](./assets/images/swagger-ui-metadata.png)
 
 ## Grouping Resources with Tags
 
-Last, but not least we can also group resources with tags. For example if you want to group multiple controllers under one tag you can do so by applying the `ApiTags()` decorator to the controllers.
+Last, but not least we can also group resources with tags. For example, if you want to group multiple controllers under one tag you can do so by applying the `ApiTags()` decorator to the controllers.
 
 ```ts
 import { Controller } from '@nestjs/common';

@@ -77,15 +77,15 @@ Using a tool such as [DBeaver](https://dbeaver.io/) you can connect to the local
 
 ## Introducing Knex
 
-NestJS is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. We can use any `Node.js` database library or ORM such as [Sequelize](https://sequelize.org/), [Prisma](https://www.prisma.io/), [Knex.js](http://knexjs.org/)...etc. For this course we'll be using `Knex.js`, which is a SQL query builder with support for `PostgreSQL`, `MSSQL`, `MySQL`, `MariaDB`, `SQLite3`, `Oracle` and `Amazon Redshift`. As you might have guessed from the title of the chapter we'll be using [PostgreSQL](https://www.postgresql.org/) as a database.
+NestJS is database agnostic, allowing you to easily integrate with any SQL or NoSQL database. We can use any `Node.js` database library or ORM such as [Sequelize](https://sequelize.org/), [Prisma](https://www.prisma.io/), [Knex.js](http://knexjs.org/)...etc. For this course, we'll be using `Knex.js`, which is a SQL query builder with support for `PostgreSQL`, `MSSQL`, `MySQL`, `MariaDB`, `SQLite3`, `Oracle` and `Amazon Redshift`. As you might have guessed from the title of the chapter we'll be using [PostgreSQL](https://www.postgresql.org/) as a database.
 
-In order to work with `Knex.js` and `PostgreSQL` we need to install a few packages.
+To work with `Knex.js` and `PostgreSQL` we need to install a few packages.
 
 ```ts
  yarn add pg knex nestjs-knex
  ```
 
- **Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application you might want to write your own NestJS package to integrate Knex. This package is not frequently updated, making it troublesome to update `Knex.js`.
+ **Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application, you might want to write your own NestJS package to integrate Knex. This package is not frequently updated, making it troublesome to update `Knex.js`.
 
  After installing the `nestjs-knex` package we need to import it into our application's root module. Open the `app.module.file` and modify it as listed below.
 
@@ -114,9 +114,9 @@ import { KnexModule } from 'nestjs-knex';
   providers: [...]
 })
 export class AppModule {}
- ```
+```
 
- We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `PG_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup this is `localhost`.
+ We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `PG_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup, this is `localhost`.
 
 ## Persisting the Car Insurance Quotes
 
@@ -142,7 +142,7 @@ export abstract class CarInsuranceQuoteRepository {
 }
 ```
 
-We declare a simple repository contract using an abstract class. A cool feature of TypeScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript is able to extract the interface from the abstract class. The repository allows us to save and load car insurance quotes. 
+We declare a simple repository contract using an abstract class. A cool feature of TypeScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript can extract the interface from the abstract class. The repository allows us to save and load car insurance quotes. 
 
 Let's implement a Knex specific implementation of this abstract class. Add a file called `knex-car-insurance-quote.repository.ts` to the folder containing the abstract class. It contains the following code:
 
@@ -230,7 +230,7 @@ export class CarInsuranceQuoteModule {}
 
 We are almost there. The only thing left to do is to update the quote service (`quote.service.ts`) to use the new repository to save and load the quotes.
 
-First inject the repository via the service's constructor.
+First, inject the repository via the service's constructor.
 
 ```ts
 import { CarBrand, CarBrandRepository, CarInsuranceQuoteRepository } from './repositories';
@@ -267,7 +267,7 @@ export class QuoteService {
 }
 ```
 
-And finally update the `calculatePremium()` method to persist the quotes.
+And finally, update the `calculatePremium()` method to persist the quotes.
 
 ```ts
 @Injectable()
@@ -293,7 +293,6 @@ export class QuoteService {
     };
   }
 }
-
 ```
 
 Voila, the quotes are now persisted in the database. Start the application, open a browser and navigate to http://localhost:3000/api and use the Swagger UI to test it. Yay, the car insurance quotes are now persisted in a database!
