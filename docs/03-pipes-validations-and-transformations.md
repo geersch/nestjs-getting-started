@@ -2,7 +2,7 @@
 
 ## What are Pipes?
 
-Always validate the data sent into the API! NestJS provides pipes to automatically validate incoming requests. A pipe is a class annotated with the `@Injectable()` decorator and they implement the `PipeTransform` interface. The `@Injectable()` decorator marks a class as a provider in NestJS's dependency injection system. NestJS's dependency injection system it out-of-scope for this course, we can fill an entire new course with that topic. But now and then we'll encounter it throughout this course. For now it suffices to know that providers must be marked with the `@Injectable()` decorator and that they are singletons scoped to their containing module by default.
+Always validate the data sent into the API! NestJS provides pipes to automatically validate incoming requests. A pipe is a class annotated with the `@Injectable()` decorator and they implement the `PipeTransform` interface. The `@Injectable()` decorator marks a class as a provider in NestJS's dependency injection system. NestJS's dependency injection system is out-of-scope for this course, we can fill an entirely new course with that topic. But now and then we'll encounter it throughout this course. For now, it suffices to know that providers must be marked with the `@Injectable()` decorator and that they are singletons scoped to their containing module by default.
 
 Pipes are used to validate and transform data.
 
