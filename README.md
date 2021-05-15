@@ -64,12 +64,6 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 3. [Introducing Knex](./docs/09-add-postgresql-with-knex.md)
 4. [Persisting the Car Insurance Quotes](./docs/09-add-postgresql-with-knex.md)
 
-## Bonus
-
-1. [Creating a Custom Pipe](./docs/10-bonus.md)
-2. [Creating a Custom Guard](./docs/10-bonus.md)
-3. [Creating a Custom Param Decorator](./docs/10-bonus.md)
-
 ## Other Building Blocks
 
-1. [Other Building Blocks](./docs/11-other-building-blocks.md)
+1. [Other Building Blocks](./docs/10-other-building-blocks.md)
