@@ -51,13 +51,25 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 2. [Catching Custom Exceptions with Filters](./docs/07-exception-filters.md)
 2. [Binding Filters](./docs/07-exception-filters.md)
 
+## Middleware
+
+1. [What is Middleware?](./docs/08-middleware.md)
+2. [Configuring Middleware](./docs/08-middleware.md)
+4. [ExpressJS Middleware](./docs/08-middleware.md)
+
 ## Add PostgreSQL with Knex
 
-1. [Prerequisite: Install Docker](./docs/08-add-postgresql-with-knex.md)
-2. [Running PostgreSQL in a Docker Container](./docs/08-add-postgresql-with-knex.md)
-3. [Introducing Knex](./docs/08-add-postgresql-with-knex.md)
-4. [Persisting the Car Insurance Quotes](./docs/08-add-postgresql-with-knex.md)
+1. [Prerequisite: Install Docker](./docs/09-add-postgresql-with-knex.md)
+2. [Running PostgreSQL in a Docker Container](./docs/09-add-postgresql-with-knex.md)
+3. [Introducing Knex](./docs/09-add-postgresql-with-knex.md)
+4. [Persisting the Car Insurance Quotes](./docs/09-add-postgresql-with-knex.md)
+
+## Bonus
+
+1. [Creating a Custom Pipe](./docs/10-bonus.md)
+2. [Creating a Custom Guard](./docs/10-bonus.md)
+3. [Creating a Custom Param Decorator](./docs/10-bonus.md)
 
 ## Other Building Blocks
 
-1. [Other Building Blocks](./docs/09-other-building-blocks.md)
+1. [Other Building Blocks](./docs/11-other-building-blocks.md)

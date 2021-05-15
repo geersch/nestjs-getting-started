@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 // import { BusinessRuleViolationFilter } from './business-rule-violation.filter';
+import * as compression from 'compression';
 
 const GLOBAL_PREFIX = 'api';
 
@@ -11,6 +12,8 @@ async function bootstrap() {
   app.setGlobalPrefix(GLOBAL_PREFIX);
   app.useGlobalPipes(new ValidationPipe());
   // app.useGlobalFilters(new BusinessRuleViolationFilter());
+
+  app.use(compression());
 
   const config = new DocumentBuilder()
     .setTitle('Acme API')

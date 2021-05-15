@@ -4,6 +4,7 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { APP_FILTER } from '@nestjs/core';
 import { BusinessRuleViolationFilter } from './business-rule-violation.filter';
 import { KnexModule } from 'nestjs-knex';
+// import { ContentTypeMiddlewareConfiguration } from 'src/require-content-type.middleware';
 
 @Module({
   imports: [
@@ -33,6 +34,13 @@ import { KnexModule } from 'nestjs-knex';
       provide: APP_FILTER,
       useClass: BusinessRuleViolationFilter,
     },
+
+    /*
+    {
+      provide: ContentTypeMiddlewareConfiguration,
+      useValue: { requiredContentType: 'application/json' }
+    }
+    */
   ],
 })
 export class AppModule {}
