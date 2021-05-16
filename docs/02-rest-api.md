@@ -279,14 +279,14 @@ yarn start
 And make a `cURL` request.
 
 ```sh
-❯ curl --location --request POST 'http://localhost:3000/api/quote/calculate'
+curl --location --request POST 'http://localhost:3000/api/quote/calculate'
 hello, world!%
 ```
 
 Using another HTTP verb will result in a `404` status code being returned.
 
 ```sh
-❯ curl --location --request GET 'http://localhost:3000/api/quote/calculate'
+curl --location --request GET 'http://localhost:3000/api/quote/calculate'
 {"statusCode":404,"message":"Cannot GET /api/quote/calculate","error":"Not Found"}%
 ```
 

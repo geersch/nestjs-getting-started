@@ -5,30 +5,30 @@ import { APP_FILTER } from '@nestjs/core';
 import { BusinessRuleViolationFilter } from './business-rule-violation.filter';
 import { KnexModule } from 'nestjs-knex';
 // import { ContentTypeMiddlewareConfiguration } from 'src/require-content-type.middleware';
+import * as getenv from 'getenv';
 
 @Module({
   imports: [
     CarInsuranceQuoteModule,
-    // TODO: Retrieve these values from environment variables.
     AuthenticationModule.register({
-      jwtSecret: 'my-secret-key',
-      expiresIn: '1h',
+      jwtSecret: getenv.string('JWT_SECRET'),
+      expiresIn: getenv.string('JWT_EXPIRES_IN', '1h'),
     }),
     KnexModule.forRootAsync({
       useFactory: () => ({
         config: {
           client: 'pg',
           connection: {
-            host: process.env.PG_HOST,
-            user: process.env.POSTGRES_USER,
-            password: process.env.POSTGRES_PASSWORD,
-            database: 'acme',
+            host: getenv.string('DB_HOST'),
+            user: getenv.string('DB_USER'),
+            password: getenv.string('DB_PASSWORD'),
+            database: getenv.string('DB_NAME'),
+            ssl: { rejectUnauthorized: false },
           },
         },
       }),
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,

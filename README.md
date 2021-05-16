@@ -67,3 +67,13 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 ## Other Building Blocks
 
 1. [Other Building Blocks](./docs/10-other-building-blocks.md)
+
+## Bonus - Deploying to Heroku
+
+1. [Prerequisites](/docs/11-bonus-deploying-to-heroku.md)
+2. [Environment Variables](/docs/11-bonus-deploying-to-heroku.md)
+3. [The Procfile](/docs/11-bonus-deploying-to-heroku.md)
+4. [Creating a Heroku Application](/docs/11-bonus-deploying-to-heroku.md)
+5. [Setting up a PostgreSQL Database](/docs/11-bonus-deploying-to-heroku.md)
+6. [Application Environment](/docs/11-bonus-deploying-to-heroku.md)
+7. [Deployment](/docs/11-bonus-deploying-to-heroku.md)

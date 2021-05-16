@@ -215,14 +215,14 @@ public async getById(
 If we pass an invalid value as the route parameter, we'll get a `400 Bad Request` response code.
 
 ```sh
-❯ curl --location --request GET 'http://localhost:3000/api/quote/foo'
+curl --location --request GET 'http://localhost:3000/api/quote/foo'
 {"statusCode":400,"message":"Validation failed (numeric string is expected)","error":"Bad Request"}%
 ```
 
 If we pass a valid value it will return a `200 OK` response code and the hardcoded quote as the payload.
 
 ```sh
-❯ curl --location --request GET 'http://localhost:3000/api/quote/1'
+curl --location --request GET 'http://localhost:3000/api/quote/1'
 {"monthlyPremium":10,"yearlyPremium":120}%
 ```
 

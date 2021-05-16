@@ -4,12 +4,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 // import { BusinessRuleViolationFilter } from './business-rule-violation.filter';
 import * as compression from 'compression';
-
-const GLOBAL_PREFIX = 'api';
+import * as getenv from 'getenv';
 
 async function bootstrap() {
+  const globalPrefix: string = getenv.string('GLOBAL_PREFIX', 'api');
+
   const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix(GLOBAL_PREFIX);
+  app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(new ValidationPipe());
   // app.useGlobalFilters(new BusinessRuleViolationFilter());
 
@@ -22,8 +23,9 @@ async function bootstrap() {
     .addBearerAuth({ description: 'JWT Token', type: 'http' })
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(GLOBAL_PREFIX, app, document);
+  SwaggerModule.setup(globalPrefix, app, document);
 
-  await app.listen(3000);
+  const port: number = getenv.int('PORT', 3000);
+  await app.listen(port);
 }
 bootstrap();
