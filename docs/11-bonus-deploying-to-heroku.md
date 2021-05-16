@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-For this chapter you'll need a Heroku account. If you don't have one yet sign up here:
+For this chapter, you'll need a Heroku account. If you don't have one yet sign up here:
 
 https://signup.heroku.com/login
 
@@ -23,7 +23,7 @@ On `Ubuntu16+` or other Linux OS's use [snap](https://snapcraft.io).
 sudo snap install --classic heroku
 ```
 
-The CLI is built with `Node.js` and is also installable via `NPM`. Only use this method for environments where autoupdating is not wanted or where Heroku does not offer a prebuilt binary.
+The CLI is built with `Node.js` and is also installable via `NPM`. Only use this method for environments where auto-updating is not wanted or where Heroku does not offer a prebuilt binary.
 
 ```sh
 npm i -g heroku
@@ -42,9 +42,9 @@ You should see `heroku/major.minor.path` in the output.
 
 ## Environment Variables
 
-There are some places in the code where we hardcoded certain values such as the database name, secret to sign JWT tokens, global prefix for every HTTP route path...etc. We need to replace these hardcoded values with environment variables that we can configure on the hosting environment. 
+There are some places in the code where certain values such as the database name, secret to sign JWT tokens, a global prefix for every HTTP route path...etc. are hardcoded. We need to replace these hardcoded values with environment variables that we can configure on the hosting environment. 
 
-In total we can identify 8 such variables.
+In total, we can identify 8 such variables.
 
 | Name           | Description                           | Type    | Default value |
 | -------------- | ------------------------------------- | ------- | ------------- |
@@ -57,7 +57,7 @@ In total we can identify 8 such variables.
 | JWT_SECRET     | Secret used to sign JWT tokens        | string  | /             |
 | JWT_EXPIRES_IN | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"  | string  | `1h` |
 
-These hardcoded values are either located in the application's main entry file (`main.ts`) or in the root module (`app.module.ts`).
+These hardcoded values are either located in the application's main entry file (`main.ts`) or the root module (`app.module.ts`).
 
 To read the environment variables we'll be using a package called [getenv](https://github.com/ctavan/node-getenv).
 
@@ -91,7 +91,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Via `getenv.disableFallbacks()` you can disallow fallbacks in environments (e.g. `production`) where you don't want to rely on them. In our example application we'll allow fallbacks, but consider disabling them in real-world applications. It helps you identity environment variables which you forgot to configure.
+Via `getenv.disableFallbacks()` you can disallow fallbacks in environments (e.g. `production`) where you don't want to rely on them. In our example application we'll allow fallbacks, but consider disabling them in real-world applications. It helps you identity environment variables that you forgot to configure.
 
 ```ts
 if (process.env.NODE_ENV === 'production') {
@@ -99,7 +99,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 ```
 
-Time to move on to the root module (`main.ts`). Again import `getenv` and use it to read the values from the environment. If this case, a fallback value is only configured for the `JWT_EXPIRES_IN` environment variable.
+Time to move on to the root module (`main.ts`). Again import `getenv` and use it to read the values from the environment. In this case, a fallback value is only configured for the `JWT_EXPIRES_IN` environment variable.
 
 ```ts
 ...
@@ -137,10 +137,10 @@ If you start the application now you'll receive an error.
 
 ```sh
 yarn start:dev
-Error: GetEnv.Nonexistent: JWT_SECRET does not exist and no fallback value provided.
+Error: GetEnv.Nonexistent: JWT_SECRET does not exist and no fallback value is provided.
 ```
 
-First you need to set the environment variables.
+First, you need to set the environment variables.
 
 ```sh
 export JWT_SECRET=very-top-secret
@@ -150,7 +150,7 @@ export DB_PASSWORD=superuser_password_for_postgresql
 export DB_NAME=acme
 ```
 
-Now the application can read the variables from the environment and it will start up!
+Now the application can read the variables from the environment and it will start!
 
 **Remark**: In [chapter 9](./09-add-postgresql-with-knex.md) we also used two environment variables, `POSTGRES_USER` and `POSTGRES_PASSWORD` in the `docker-compose.yml` file. You can leave them or you can replace them with the new `DB_USER` and `DB_PASSWORD` variables.
 
@@ -168,7 +168,7 @@ Procfiles can contain additional process types. For example, you might declare o
 
 ## Creating a Heroku Application
 
-Before we can deploy we need to create an application on Heroku. You can do this via the Heroku web application or via the CLI. First you need to log in.
+Before we can deploy we need to create an application on Heroku. You can do this via the Heroku web application or via the CLI. First, you need to log in.
 
 ```sh
 heroku login
@@ -194,10 +194,10 @@ If you prefer using the web application, then follow these steps:
 2. Click the `New` button in the top right-hand corner.
 3. Select `Create New App`.
 4. Fill in a name for the application (e.g. `acme-api`, `nestjs-getting-started`...).
-5. Select a region (`United States` or `Europe`).
+5. Select a region (`The United States` or `Europe`).
 6. Finally, click the `Create app` button.
 
-After a few moments the application will be created and you'll be redirected to the application's dashboard.
+After a few moments, the application will be created and you'll be redirected to the application's dashboard.
 
 ## Setting up a PostgreSQL Database
 
@@ -213,7 +213,7 @@ Now, submit the order form. After the `Heroku Postgres` add-on has been installe
 
 ![Heroku Postgres - Database Credentials](./assets/images/heroku-postgres-database-credentials.png)
 
-Take note of the host, database, user and password. You'll need them to configure the Heroku environment variables later. For now, you'll need them to connect to the database directly using a tool such as [DBeaver](https://dbeaver.io). Go ahead, start the tool, configure a new connection to the PostgreSQL database, and run the following SQL script to create the `car_insurance_quote` table.
+Take note of the host, database, user, and password. You'll need them to configure the Heroku environment variables later. For now, you'll need them to connect to the database directly using a tool such as [DBeaver](https://dbeaver.io). Go ahead, start the tool, configure a new connection to the PostgreSQL database, and run the following SQL script to create the `car_insurance_quote` table.
 
 ```sql
 CREATE TABLE IF NOT EXISTS car_insurance_quote (
@@ -283,7 +283,7 @@ All we need to do to deploy our application is to push the code to the GIT repos
 git push heroku master:master
 ```
 
-Heroku will automatically install the dependencies, build the application, prune the development dependencies, inspect the `Procfile` and launch the application. The build output will list the application's URL when the deploy is done.
+Heroku will automatically install the dependencies, build the application, prune the development dependencies, inspect the `Procfile` and launch the application. The build output will list the application's URL when the deployment is done.
 
 ```sh
 ...
