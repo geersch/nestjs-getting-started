@@ -14,9 +14,11 @@ export class RequireContentTypeMiddleware implements NestMiddleware {
   public use(req: Request, res: Response, next: NextFunction): void {
     const contentType = req.headers['content-type'];
     if (contentType !== this.config.requiredContentType) {
-      res.status(400).send(`Content-Type ${this.config.requiredContentType} is required.`);
+      res
+        .status(400)
+        .send(`Content-Type ${this.config.requiredContentType} is required.`);
       return;
-    } 
+    }
     next();
   }
 }
