@@ -23,7 +23,8 @@ import * as getenv from 'getenv';
             user: getenv.string('DB_USER'),
             password: getenv.string('DB_PASSWORD'),
             database: getenv.string('DB_NAME'),
-            ssl: { rejectUnauthorized: false },
+            // ssl: { rejectUnauthorized: false },
+            ssl: false
           },
         },
       }),
