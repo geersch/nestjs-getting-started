@@ -1,10 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { LocalStrategy } from './local.strategy';
-import { UsersService } from './users.service';
 import { AuthenticationController } from './authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy, JwtStrategyConfiguration } from './jwt.strategy';
+import { PrismaModule } from '../prisma';
+import { UserRepository } from './repositories/user.repository';
+import { PrismaUserRepository } from './repositories/prisma-user.repository';
 
 export interface AuthenticationModuleOptions {
   jwtSecret: string;
@@ -18,7 +20,6 @@ export class AuthenticationModule {
       module: AuthenticationModule,
       providers: [
         AuthenticationService,
-        UsersService,
         LocalStrategy,
         {
           provide: JwtStrategyConfiguration,
@@ -27,6 +28,7 @@ export class AuthenticationModule {
           },
         },
         JwtStrategy,
+        { provide: UserRepository, useClass: PrismaUserRepository },
       ],
       controllers: [AuthenticationController],
       imports: [
@@ -36,6 +38,7 @@ export class AuthenticationModule {
             expiresIn: options.expiresIn || '1h', // default to 1 hour
           },
         }),
+        PrismaModule,
       ],
     };
   }

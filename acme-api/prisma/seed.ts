@@ -2,6 +2,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+  /**
+   * Car brands
+   */
   await prisma.carBrand.upsert({
     where: { id: 1 },
     update: {
@@ -38,7 +41,26 @@ async function main() {
     },
   });
 
-  console.log('seeded');
+  /**
+   * Users
+   */
+  await prisma.user.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      username: 'Bob',
+      hashedPassword: '$2a$08$hZCfpa2XVRshMkKwPGqnHOFjp9ldeTZWpt5Ph9.MH6Bhquw6i5byi'
+    }
+  });
+
+  await prisma.user.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      username: 'Alice',
+      hashedPassword: '$2a$08$2cF6keVw/M0QAy3f9GWIdO1d9ubns0B19EIKlXSmI62gt474SbNMK'
+    }
+  });
 }
 
 main()

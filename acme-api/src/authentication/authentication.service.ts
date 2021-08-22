@@ -1,33 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User, UsersService } from './users.service';
+import { User, UserRepository } from './repositories/user.repository';
+import { compare } from 'bcryptjs';
 
-export type AuthenticationUser = Omit<User, 'password'>;
+export type AuthenticatedUser = Omit<User, 'hashedPassword'>;
 
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
   ) {}
 
   public async validate(
     username: string,
     password: string,
-  ): Promise<AuthenticationUser | null> {
-    const user: User = await this.usersService.findByUsername(username);
-    if (user?.password === password) {
-      // Strip the password from the user object by destructuring it and spreading the other
-      // properties into the authenticatedUser object.
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...authenticatedUser } = user;
-      return authenticatedUser;
+  ): Promise<AuthenticatedUser | null> {
+    const user: User = await this.userRepository.findByUsername(username);
+
+    if (user && (await compare(password, user.hashedPassword))) {
+      return { id: user.id, username: user.username };
     }
 
     return null;
   }
 
-  public signin(user: AuthenticationUser): string {
+  public signin(user: AuthenticatedUser): string {
     const payload = { username: user.username, sub: user.id };
     return this.jwtService.sign(payload);
   }

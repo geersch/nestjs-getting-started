@@ -77,13 +77,13 @@ export class UsersService {
 }
 ```
 
-Now we are ready to implement our `AuthenticationService` we generated earlier. With the use of NestJS's dependency injection system, we inject the `UserService` via its constructor. We then provide a `validate(username, password)` method to validate a user's credentials. If a user could be found and the passwords match, then an `AuthenticationUser` object is returned, otherwise `null`.
+Now we are ready to implement our `AuthenticationService` we generated earlier. With the use of NestJS's dependency injection system, we inject the `UserService` via its constructor. We then provide a `validate(username, password)` method to validate a user's credentials. If a user could be found and the passwords match, then an `AuthenticatedUser` object is returned, otherwise `null`.
 
 ```ts
 import { Injectable } from '@nestjs/common';
 import { User, UsersService } from './users.service';
 
-export type AuthenticationUser = Omit<User, 'password'>;
+export type AuthenticatedUser = Omit<User, 'password'>;
 
 @Injectable()
 export class AuthenticationService {
@@ -92,7 +92,7 @@ export class AuthenticationService {
   public async validate(
     username: string,
     password: string,
-  ): Promise<AuthenticationUser | null> {
+  ): Promise<AuthenticatedUser | null> {
     const user: User = await this.usersService.findByUsername(username);
     if (user?.password === password) {
       // Strip the password from the user object by destructuring it and spreading the other
@@ -117,7 +117,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import {
   AuthenticationService,
-  AuthenticationUser,
+  AuthenticatedUser,
 } from './authentication.service';
 
 @Injectable()
@@ -129,8 +129,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   public async validate(
     username: string,
     password: string,
-  ): Promise<AuthenticationUser> {
-    const user: AuthenticationUser | null =
+  ): Promise<AuthenticatedUser> {
+    const user: AuthenticatedUser | null =
       await this.authenticationService.validate(username, password);
     if (!user) {
       throw new UnauthorizedException();
@@ -312,7 +312,7 @@ export class AuthenticationService {
 
   ...
 
-  public signin(user: AuthenticationUser): string {
+  public signin(user: AuthenticatedUser): string {
     const payload = { username: user.username, sub: user.id };
     return this.jwtService.sign(payload);
   }
@@ -385,14 +385,14 @@ yarn add @types/passport-jwt -D
 
 Add a file called `jwt.strategy.ts` to the authentication module. Like the local strategy, the `JwtStrategy` extends from `PassportStrategy` and specifies the strategy is uses. This time we do pass some custom configuration to the Passport strategy. We must tell it the secret that was used to sign the tokens so that it can validate the incoming tokens. We also tell the Passport strategy where it can find the JWT token in the request. In our case, it will be extracted from the authorization header. The configuration is injected via the constructor and the Passport configuration is passed the `super()` invocation.
 
-When the token is validated, the `validate()` method is called and the payload of the token is passed to it. We take this data and convert it back into an `AuthenticationUser` instance. Voila, we have now authenticated our user via a JWT token.
+When the token is validated, the `validate()` method is called and the payload of the token is passed to it. We take this data and convert it back into an `AuthenticatedUser` instance. Voila, we have now authenticated our user via a JWT token.
 
 
 ```ts
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { AuthenticationUser } from './authentication.service';
+import { AuthenticatedUser } from './authentication.service';
 
 interface JwtPayload {
   sub: string;
@@ -413,7 +413,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public async validate(payload: JwtPayload): Promise<AuthenticationUser> {
+  public async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
     return {
       id: parseInt(payload.sub, 10),
       username: payload.username,

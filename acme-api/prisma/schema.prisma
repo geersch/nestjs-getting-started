@@ -8,20 +8,28 @@ datasource db {
 }
 
 model CarInsuranceQuote {
-  id             Int      @id @default(autoincrement()) @map(name: "id")
-  ageOfDriver    Int      @map(name: "ageofdriver")
-  monthlyPremium Decimal  @map(name: "monthlypremium") @db.Decimal(12, 2)
-  yearlyPremium  Decimal  @map(name: "yearlypremium") @db.Decimal(12, 2)
-  createdOn      DateTime @map(name: "createdon") @db.Timestamp(6)
+  id             Int      @id @default(autoincrement())
+  ageOfDriver    Int      @map("ageofdriver")
+  monthlyPremium Decimal  @map("monthlypremium") @db.Decimal(12, 2)
+  yearlyPremium  Decimal  @map("yearlypremium") @db.Decimal(12, 2)
+  createdOn      DateTime @map("createdon") @db.Timestamp(6)
 
-  @@map(name: "car_insurance_quote")
+  @@map("car_insurance_quote")
 }
 
 model CarBrand {
-  id               Int     @id @default(autoincrement()) @map(name: "id")
-  name             String  @map(name: "name")
-  minimumDriverAge Int     @map(name: "minimumdriverage")
-  yearlyPremium    Decimal @map(name: "yearlypremium") @db.Decimal(12, 2)
+  id               Int     @id @default(autoincrement())
+  name             String
+  minimumDriverAge Int     @map("minimumdriverage")
+  yearlyPremium    Decimal @map("yearlypremium") @db.Decimal(12, 2)
 
-  @@map(name: "car_brand")
+  @@map("car_brand")
+}
+
+model User {
+  id             Int    @id @default(autoincrement())
+  username       String @unique
+  hashedPassword String @map("hashedpassword")
+
+  @@map("user")
 }

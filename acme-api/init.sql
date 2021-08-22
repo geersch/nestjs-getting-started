@@ -12,3 +12,9 @@ CREATE TABLE IF NOT EXISTS car_brand (
    minimumDriverAge INT NOT NULL,
    yearlyPremium decimal(12,2) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS "user" (
+   id serial PRIMARY KEY,
+   username text NOT NULL UNIQUE,
+   hashedpassword text NOT NULL
+);
