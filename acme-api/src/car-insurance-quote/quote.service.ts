@@ -6,7 +6,6 @@ import {
   UnknownCarBrandError,
 } from './errors';
 import {
-  CarBrand,
   CarBrandRepository,
   CarInsuranceQuoteRepository,
 } from './repositories';
@@ -40,7 +39,7 @@ export class QuoteService {
       throw new PurchasePriceTooLowError();
     }
 
-    const brand: CarBrand = this.carBrandRepository.findById(carId);
+    const brand = await this.carBrandRepository.findById(carId);
     if (!brand) {
       throw new UnknownCarBrandError();
     }
