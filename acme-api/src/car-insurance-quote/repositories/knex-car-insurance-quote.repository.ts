@@ -60,6 +60,6 @@ export class KnexCarInsuranceQuoteRepository
           yearlyPremium: parseFloat(row.yearlyPremium as any),
           createdOn: row.createdOn,
         }
-      : undefined;
+      : null;
   }
 }
