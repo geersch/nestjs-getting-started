@@ -3,7 +3,7 @@ import {
   CarInsuranceQuote,
   CarInsuranceQuoteRepository,
 } from './car-insurance-quote.repository';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../../prisma';
 
 @Injectable()
 export class PrismaCarInsuranceQuoteRepository

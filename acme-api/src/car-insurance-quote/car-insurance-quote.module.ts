@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PrismaModule } from '../prisma';
 import { QuoteController } from './quote.controller';
 import { QuoteService } from './quote.service';
 import {
@@ -6,18 +7,17 @@ import {
   CarInsuranceQuoteRepository,
   PrismaCarBrandRepository,
   PrismaCarInsuranceQuoteRepository,
-  PrismaService,
 } from './repositories';
 
 @Module({
   controllers: [QuoteController],
+  imports: [PrismaModule],
   providers: [
     QuoteService,
     {
       provide: CarBrandRepository,
       useClass: PrismaCarBrandRepository,
     },
-    PrismaService,
     {
       provide: CarInsuranceQuoteRepository,
       useClass: PrismaCarInsuranceQuoteRepository,
