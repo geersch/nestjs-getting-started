@@ -24,7 +24,7 @@ import * as getenv from 'getenv';
             password: getenv.string('POSTGRES_PASSWORD'),
             database: getenv.string('DB_NAME'),
             // ssl: { rejectUnauthorized: false },
-            ssl: false
+            ssl: false,
           },
         },
       }),

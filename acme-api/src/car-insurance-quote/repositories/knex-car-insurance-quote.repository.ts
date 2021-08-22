@@ -38,7 +38,7 @@ export class KnexCarInsuranceQuoteRepository
     };
   }
 
-  public async load(id: number): Promise<CarInsuranceQuote> {
+  public async load(id: number): Promise<CarInsuranceQuote | null> {
     const row = await this.knex
       .table(this.table)
       .where('id', id)
@@ -51,13 +51,15 @@ export class KnexCarInsuranceQuoteRepository
       )
       .first<CarInsuranceQuote>();
 
-    return row ? {
-      id: row.id,
-      ageOfDriver: row.ageOfDriver,
-      // TODO: use node-pg-types to configure parsers to convert PostgreSQL types back into JavaScript types.
-      monthlyPremium: parseFloat(row.monthlyPremium as any),
-      yearlyPremium: parseFloat(row.yearlyPremium as any),
-      createdOn: row.createdOn,
-    } : undefined;
+    return row
+      ? {
+          id: row.id,
+          ageOfDriver: row.ageOfDriver,
+          // TODO: use node-pg-types to configure parsers to convert PostgreSQL types back into JavaScript types.
+          monthlyPremium: parseFloat(row.monthlyPremium as any),
+          yearlyPremium: parseFloat(row.yearlyPremium as any),
+          createdOn: row.createdOn,
+        }
+      : undefined;
   }
 }
