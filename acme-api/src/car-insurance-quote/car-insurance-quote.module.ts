@@ -1,18 +1,24 @@
 import { Module } from '@nestjs/common';
 import { QuoteController } from './quote.controller';
 import { QuoteService } from './quote.service';
-import { CarBrandRepository } from './repositories';
-import { CarInsuranceQuoteRepository } from './repositories/car-insurance-quote.repository';
-import { KnexCarInsuranceQuoteRepository } from './repositories/knex-car-insurance-quote.repository';
+import {
+  CarBrandRepository,
+  CarInsuranceQuoteRepository,
+  // KnexCarInsuranceQuoteRepository,
+  PrismaCarInsuranceQuoteRepository,
+  PrismaService,
+} from './repositories';
 
 @Module({
   controllers: [QuoteController],
   providers: [
     CarBrandRepository,
     QuoteService,
+    PrismaService,
     {
       provide: CarInsuranceQuoteRepository,
-      useClass: KnexCarInsuranceQuoteRepository,
+      // useClass: KnexCarInsuranceQuoteRepository,
+      useClass: PrismaCarInsuranceQuoteRepository,
     },
   ],
 })

@@ -13,5 +13,5 @@ export abstract class CarInsuranceQuoteRepository {
     yearlyPremium: number,
   ): Promise<CarInsuranceQuote>;
 
-  public abstract load(id: number): Promise<CarInsuranceQuote>;
+  public abstract load(id: number): Promise<CarInsuranceQuote | null>;
 }

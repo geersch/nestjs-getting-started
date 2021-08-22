@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model CarInsuranceQuote {
+  id             Int      @id @default(autoincrement()) @map(name: "id")
+  ageOfDriver    Int                                    @map(name: "ageofdriver")
+  monthlyPremium Decimal  @db.Decimal(12, 2)            @map(name: "monthlypremium")
+  yearlyPremium  Decimal  @db.Decimal(12, 2)            @map(name: "yearlypremium")
+  createdOn      DateTime @db.Timestamp(6)              @map(name: "createdon")
+
+  @@map(name: "car_insurance_quote")
+}
