@@ -5,14 +5,6 @@ export interface CarBrand {
   yearlyPremium: number;
 }
 
-export class CarBrandRepository {
-  private readonly brands: CarBrand[] = [
-    { id: 1, name: 'Audi', minimumDriverAge: 18, yearlyPremium: 250 },
-    { id: 2, name: 'BMW', minimumDriverAge: 18, yearlyPremium: 150 },
-    { id: 3, name: 'Porsche', minimumDriverAge: 25, yearlyPremium: 500 },
-  ];
-
-  public findById(id: number): CarBrand | undefined {
-    return this.brands.find((brand: CarBrand) => brand.id === id);
-  }
+export abstract class CarBrandRepository {
+  public abstract findById(id: number): Promise<CarBrand | null>;
 }

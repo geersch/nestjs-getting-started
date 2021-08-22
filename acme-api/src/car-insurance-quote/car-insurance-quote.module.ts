@@ -4,7 +4,7 @@ import { QuoteService } from './quote.service';
 import {
   CarBrandRepository,
   CarInsuranceQuoteRepository,
-  // KnexCarInsuranceQuoteRepository,
+  PrismaCarBrandRepository,
   PrismaCarInsuranceQuoteRepository,
   PrismaService,
 } from './repositories';
@@ -12,12 +12,14 @@ import {
 @Module({
   controllers: [QuoteController],
   providers: [
-    CarBrandRepository,
     QuoteService,
+    {
+      provide: CarBrandRepository,
+      useClass: PrismaCarBrandRepository,
+    },
     PrismaService,
     {
       provide: CarInsuranceQuoteRepository,
-      // useClass: KnexCarInsuranceQuoteRepository,
       useClass: PrismaCarInsuranceQuoteRepository,
     },
   ],

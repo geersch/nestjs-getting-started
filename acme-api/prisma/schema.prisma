@@ -16,3 +16,12 @@ model CarInsuranceQuote {
 
   @@map(name: "car_insurance_quote")
 }
+
+model CarBrand {
+  id               Int     @id @default(autoincrement()) @map(name: "id")
+  name             String  @map(name: "name")
+  minimumDriverAge Int     @map(name: "minimumdriverage")
+  yearlyPremium    Decimal @map(name: "yearlypremium") @db.Decimal(12, 2)
+
+  @@map(name: "car_brand")
+}
