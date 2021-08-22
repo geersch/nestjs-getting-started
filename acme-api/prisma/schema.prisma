@@ -9,10 +9,10 @@ datasource db {
 
 model CarInsuranceQuote {
   id             Int      @id @default(autoincrement()) @map(name: "id")
-  ageOfDriver    Int                                    @map(name: "ageofdriver")
-  monthlyPremium Decimal  @db.Decimal(12, 2)            @map(name: "monthlypremium")
-  yearlyPremium  Decimal  @db.Decimal(12, 2)            @map(name: "yearlypremium")
-  createdOn      DateTime @db.Timestamp(6)              @map(name: "createdon")
+  ageOfDriver    Int      @map(name: "ageofdriver")
+  monthlyPremium Decimal  @map(name: "monthlypremium") @db.Decimal(12, 2)
+  yearlyPremium  Decimal  @map(name: "yearlypremium") @db.Decimal(12, 2)
+  createdOn      DateTime @map(name: "createdon") @db.Timestamp(6)
 
   @@map(name: "car_insurance_quote")
 }
