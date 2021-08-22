@@ -46,16 +46,16 @@ There are some places in the code where certain values such as the database name
 
 In total, we can identify 8 such variables.
 
-| Name           | Description                           | Type    | Default value |
-| -------------- | ------------------------------------- | ------- | ------------- |
-| PORT           | port on which the HTTP server listens | number  | `3000`        |
-| GLOBAL_PREFIX  | prefix for every HTTP route path.     | string  | `api`         |
-| DB_HOST        | PostgreSQL Database Host              | string  | /             |
-| DB_USER        | PostgreSQL Database User              | string  | /             |
-| DB_PASSWORD    | PostgreSQL Database Password          | string  | /             |
-| DB_NAME        | PostgreSQL Database Name              | string  | /             |
-| JWT_SECRET     | Secret used to sign JWT tokens        | string  | /             |
-| JWT_EXPIRES_IN | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"  | string  | `1h` |
+| Name              | Description                           | Type    | Default value |
+| ------------------| ------------------------------------- | ------- | ------------- |
+| PORT              | port on which the HTTP server listens | number  | `3000`        |
+| GLOBAL_PREFIX     | prefix for every HTTP route path.     | string  | `api`         |
+| POSTGRES_HOST     | PostgreSQL Database Host              | string  | /             |
+| POSTGRES_USER     | PostgreSQL Database User              | string  | /             |
+| POSTGRES_PASSWORD | PostgreSQL Database Password          | string  | /             |
+| DB_NAME           | PostgreSQL Database Name              | string  | /             |
+| JWT_SECRET        | Secret used to sign JWT tokens        | string  | /             |
+| JWT_EXPIRES_IN    | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"  | string  | `1h` |
 
 These hardcoded values are either located in the application's main entry file (`main.ts`) or the root module (`app.module.ts`).
 
@@ -117,9 +117,9 @@ import * as getenv from 'getenv';
         config: {
           client: 'pg',
           connection: {
-            host: getenv.string('DB_HOST'),
-            user: getenv.string('DB_USER'),
-            password: getenv.string('DB_PASSWORD'),
+            host: getenv.string('POSTGRES_HOST'),
+            user: getenv.string('POSTGRES_USER'),
+            password: getenv.string('POSTGRES_PASSWORD'),
             database: getenv.string('DB_NAME'),
           },
         },
@@ -144,15 +144,15 @@ First, you need to set the environment variables.
 
 ```sh
 export JWT_SECRET=very-top-secret
-export DB_HOST=localhost
-export DB_USER=superuser_username_for_postgresql
-export DB_PASSWORD=superuser_password_for_postgresql
+export POSTGRES_HOST=localhost
+export POSTGRES_USER=superuser_username_for_postgresql
+export POSTGRES_PASSWORD=superuser_password_for_postgresql
 export DB_NAME=acme
 ```
 
 Now the application can read the variables from the environment and it will start!
 
-**Remark**: In [chapter 9](./09-add-postgresql-with-knex.md) we also used two environment variables, `POSTGRES_USER` and `POSTGRES_PASSWORD` in the `docker-compose.yml` file. You can leave them or you can replace them with the new `DB_USER` and `DB_PASSWORD` variables.
+**Remark**: In [chapter 9](./09-add-postgresql-with-knex.md) we also used two environment variables, `POSTGRES_USER` and `POSTGRES_PASSWORD` in the `docker-compose.yml` file. You can leave them or you can replace them with the new `POSTGRES_USER` and `POSTGRES_PASSWORD` variables.
 
 ## The Procfile
 
@@ -236,9 +236,9 @@ Last, but not least we need to modify the bit of code that creates the connectio
         config: {
           client: 'pg',
           connection: {
-            host: getenv.string('DB_HOST'),
-            user: getenv.string('DB_USER'),
-            password: getenv.string('DB_PASSWORD'),
+            host: getenv.string('POSTGRES_HOST'),
+            user: getenv.string('POSTGRES_USER'),
+            password: getenv.string('POSTGRES_PASSWORD'),
             database: getenv.string('DB_NAME'),
             ssl: { rejectUnauthorized: false },
           },

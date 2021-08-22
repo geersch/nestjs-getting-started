@@ -7,6 +7,7 @@ This course covered the basics of getting started with NestJS, but there are a c
 * Microservices
 * CQRS
 * Health Checks
+* GraphQL
 * Prisma / Sequelize / Mongoose
 * Websockets
 * Creating a CLI with NestJS

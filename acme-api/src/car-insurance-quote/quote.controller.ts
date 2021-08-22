@@ -27,6 +27,7 @@ export class QuoteController {
 
   @ApiCreatedResponse({
     description: 'The car insurance quote has been successfully created.',
+    type: CarInsuranceQuoteResponseDto,
   })
   @Post('calculate')
   public async post(
@@ -42,8 +43,8 @@ export class QuoteController {
   }
 
   @ApiOkResponse({
-    type: CarInsuranceQuoteResponseDto,
     description: 'A car insurance quote.',
+    type: CarInsuranceQuoteResponseDto,
   })
   @Get(':id')
   public async getById(

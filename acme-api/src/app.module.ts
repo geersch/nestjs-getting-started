@@ -19,9 +19,9 @@ import * as getenv from 'getenv';
         config: {
           client: 'pg',
           connection: {
-            host: getenv.string('DB_HOST'),
-            user: getenv.string('DB_USER'),
-            password: getenv.string('DB_PASSWORD'),
+            host: getenv.string('POSTGRES_HOST'),
+            user: getenv.string('POSTGRES_USER'),
+            password: getenv.string('POSTGRES_PASSWORD'),
             database: getenv.string('DB_NAME'),
             // ssl: { rejectUnauthorized: false },
             ssl: false

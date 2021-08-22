@@ -194,13 +194,17 @@ Then add the following code to the `authentication.controller.ts` file.
 ```ts
 import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { SignInRequestDto } from './dtos';
 
 @ApiTags('authentication')
 @Controller('authentication')
 export class AuthenticationController {
-  @ApiOkResponse({ description: 'Authentication succeeded.' })
+  @ApiCreatedResponse({ description: 'Authentication succeeded.' })
   @ApiUnauthorizedResponse({ description: 'Authentication failed.' })
   @UseGuards(AuthGuard('local'))
   @Post('signin')
@@ -218,7 +222,7 @@ Start the application, open a browser and navigate to `http://localhost:3000/api
 
 ![Swagger UI - Authentication](./assets/images/swagger-ui-authentication.png)
 
-Click `Try it out` and play around with it. If authentication fails a `401 Unauthorized` response will be returned, otherwise, a `200 OK` response. Use one of our hardcoded users to sign in.
+Click `Try it out` and play around with it. If authentication fails a `401 Unauthorized` response will be returned, otherwise, a `201 Created` response. Use one of our hardcoded users to sign in.
 
 ## JSON Web Token
 
@@ -294,7 +298,7 @@ export class AppModule {}
 
 **Remark**: To keep things simple we hardcoded the secret used to sign JWT tokens and their expiration time. When deploying to production retrieve these values from your environment (environment variables) instead. Always retrieve them in your application's root module and from there pass them down to the imported modules. Never read the environment variables from within other modules as that makes it hard to track down how the application is configured.
 
-we are now ready to generate a JWT token. Open the authentication service file (`authentication.service.ts`) and add a new method called `signin()` to the `AuthenticationService`.
+We are now ready to generate a JWT token. Open the authentication service file (`authentication.service.ts`) and add a new method called `signin()` to the `AuthenticationService`.
 
 ```ts
 import { JwtService } from '@nestjs/jwt';
@@ -317,6 +321,21 @@ export class AuthenticationService {
 
 The `signin()` method takes an `AuthenticatedUser` instance and uses the `JwtService` injected via the constructor to create a JWT token. The `JwtService` from the `@nestjs/jwt` package uses the `jsonwebtoken` module internally.
 
+Now we can use this new `signin()` method in the `AuthenticationController`, but before we do this let's first add a new DTO called `signin-response.dto.ts` to the authentication module's dtos folder.
+
+```ts
+import { ApiProperty } from '@nestjs/swagger';
+
+export class SignInResponseDto {
+  @ApiProperty({
+    type: String,
+    description: 'Jason Web Token (JWT) for an authenticated user.',
+    example: 'eyJhbGci...',
+  })
+  accessToken: string;
+}
+```
+
 Now inject the `AuthenticationService` into the `AuthenticationController` and call its `signin()` method once the local Passport strategy validated the user's credentials and provided us with an `AuthenticatedUser` instance.
 
 ```ts
@@ -333,21 +352,6 @@ export class AuthenticationController {
       accessToken: this.authenticationService.signin(req.user),
     };
   }
-}
-```
-
-You might have noticed that we also created a DTO which contains the response sent back. Add a file called `signin-response.dto.ts` to the authentication module's dtos folder and add the following code to it.
-
-```ts
-import { ApiProperty } from '@nestjs/swagger';
-
-export class SignInResponseDto {
-  @ApiProperty({
-    type: String,
-    description: 'Jason Web Token (JWT) for an authenticated user.',
-    example: 'eyJhbGci...',
-  })
-  accessToken: string;
 }
 ```
 
@@ -376,7 +380,7 @@ Install the package and its type declarations.
 
 ```sh
 yarn add passport-jwt
-yarn add @types/passport-jwt
+yarn add @types/passport-jwt -D
 ```
 
 Add a file called `jwt.strategy.ts` to the authentication module. Like the local strategy, the `JwtStrategy` extends from `PassportStrategy` and specifies the strategy is uses. This time we do pass some custom configuration to the Passport strategy. We must tell it the secret that was used to sign the tokens so that it can validate the incoming tokens. We also tell the Passport strategy where it can find the JWT token in the request. In our case, it will be extracted from the authorization header. The configuration is injected via the constructor and the Passport configuration is passed the `super()` invocation.
@@ -443,6 +447,8 @@ export class AuthenticationModule {
   }
 }
 ```
+
+Note the registration of the `JwtStrategyConfiguration` provider. It is necessary since it is a dependency of the `JwtStrategy`. The JWT configuration is passed down from the main application module (`app.module.ts`) to the authentication module and eventually injected into the `JwStrategy`.
 
 ## Guards
 

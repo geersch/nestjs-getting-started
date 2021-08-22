@@ -3,6 +3,7 @@
 ## Scaffold Project via the CLI
 
 Let's create our first NestJS application with the CLI.
+
 ```sh
 nest new acme-api
 ```
@@ -159,6 +160,25 @@ The `@Module()` decorator has a single required parameter used to describe the m
 
 By default, a module encapsulates its providers. It is impossible to inject providers that are not part of the current module or are not exported by imported modules. Providers exported by a module are considered as part of that module's public interface/contract/API.
 
+Before we continue, let's remove the following files:
+
+- `app.controller.ts`
+- `app.controller.spec.ts`
+- `app.service.ts`
+
+Afterward, update the main application module (`app.module.ts`).
+
+```ts
+import { Module } from '@nestjs/common';
+
+@Module({
+  imports: [],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
 ## Creating a Car Insurance Quote Module
 
 Let's create a new `feature` module that encapsulates the functionality of the car insurance quote API that we are building.
@@ -258,7 +278,9 @@ Now we can call the endpoints of our new controller via requests to `http://loca
 
 NestJS provides decorators for all standard HTTP methods: `@Get()`, `@Post()`, `@Put`, `@Delete()`, `@Patch()`, `@Options()` and `@Head()`. Including one special decorator called `@All()` which defines that an endpoint handles all of them. Each of these decorators accepts an optional prefix/path that is again appended to the path if you wish to call the endpoint.
 
-```
+```ts
+import { Controller, Post } from '@nestjs/common';
+
 @Controller('quote')
 export class QuoteController {
   @Post('calculate')
@@ -287,12 +309,21 @@ Using another HTTP verb will result in a `404` status code being returned.
 
 ```sh
 curl --location --request GET 'http://localhost:3000/api/quote/calculate'
-{"statusCode":404,"message":"Cannot GET /api/quote/calculate","error":"Not Found"}%
+```
+
+```json
+{
+  "statusCode":404,
+  "message":"Cannot GET /api/quote/calculate",
+  "error":"Not Found"
+}
 ```
 
 The response status code is always `200` by default, except for `POST` requests which default to `201`. You can change the returned status code by applying the `@HttpCode()` decorator to the controller method.
 
 ```ts
+import { Controller, HttpCode, Post } from '@nestjs/common';
+
 @Post('calculate')
 @HttpCode(201)
 public async post(): Promise<any> {

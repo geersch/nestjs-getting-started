@@ -22,7 +22,7 @@ version: '3.5'
 services:
   postgres:
     container_name: postgres
-    image: postgres
+    image: postgres:13.4-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -44,9 +44,9 @@ This Compose configuration file points to two environment variables:
 * `POSTGRES_USER`: superuser username for PostgreSQL
 * `POSTGRES_PASSWORD`: superuser password for PostgreSQL
 
-Be sure to configure these environment variables locally before starting the container.
+Be sure to configure these environment variables locally before starting the container. (**Tip**: I use [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.)
 
-The database name is set to `acme` and there is also a volume which points to an `init.sql` SQL script. Add a new file called `sql.init` to the root of the repository and add the following DDL to it.
+The database name is set to `acme` and there is also a volume which points to an `init.sql` SQL script. Add a new file called `init.sql` to the root of the repository and add the following DDL to it.
 
 ```sql
 CREATE TABLE IF NOT EXISTS car_insurance_quote (
@@ -102,7 +102,7 @@ import { KnexModule } from 'nestjs-knex';
         config: {
           client: 'pg',
           connection: {
-            host: process.env.PG_HOST,
+            host: process.env.POSTGRES_HOST,
             user: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: 'acme',
@@ -116,7 +116,7 @@ import { KnexModule } from 'nestjs-knex';
 export class AppModule {}
 ```
 
- We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `PG_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup, this is `localhost`.
+ We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `POSTGRES_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup, this is `localhost`.
 
 ## Persisting the Car Insurance Quotes
 
@@ -197,14 +197,16 @@ export class KnexCarInsuranceQuoteRepository
       )
       .first<CarInsuranceQuote>();
 
-    return {
-      id: row.id,
-      ageOfDriver: row.ageOfDriver,
-      // TODO: use node-pg-types to configure parsers to convert PostgreSQL types back into JavaScript types.
-      monthlyPremium: parseFloat(row.monthlyPremium as any),
-      yearlyPremium: parseFloat(row.yearlyPremium as any),
-      createdOn: row.createdOn,
-    };
+    return row
+      ? {
+          id: row.id,
+          ageOfDriver: row.ageOfDriver,
+          // TODO: use node-pg-types to configure parsers to convert PostgreSQL types back into JavaScript types.
+          monthlyPremium: parseFloat(row.monthlyPremium as any),
+          yearlyPremium: parseFloat(row.yearlyPremium as any),
+          createdOn: row.createdOn,
+        }
+      : undefined;
   }
 }
 ```
@@ -267,7 +269,7 @@ export class QuoteService {
 }
 ```
 
-And finally, update the `calculatePremium()` method to persist the quotes.
+And finally, update the `calculatePremium()` method to persist the quotes. You can remove the private `premiums` variable as we no longer store the premiums in-memory. 
 
 ```ts
 @Injectable()

@@ -13,7 +13,7 @@ export class CalculateQuoteRequestDto {
   @ApiProperty({
     type: Number,
     description: 'The ID of the car brand',
-    example: 18,
+    example: 1,
   })
   @IsNumber()
   carId: number;

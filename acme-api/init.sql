@@ -5,4 +5,3 @@ CREATE TABLE IF NOT EXISTS car_insurance_quote (
    yearlyPremium decimal(12,2) NOT NULL,
    createdOn TIMESTAMP NOT NULL
 );
-

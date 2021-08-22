@@ -1,7 +1,7 @@
 import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiOkResponse,
+  ApiCreatedResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -13,7 +13,7 @@ import { SignInRequestDto, SignInResponseDto } from './dtos';
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
-  @ApiOkResponse({ description: 'Authentication succeeded.' })
+  @ApiCreatedResponse({ description: 'Authentication succeeded.' })
   @ApiUnauthorizedResponse({ description: 'Authentication failed.' })
   @UseGuards(AuthGuard('local'))
   @Post('signin')
