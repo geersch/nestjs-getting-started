@@ -50,7 +50,9 @@ Start the application, open a browser and navigate to `http://localhost:3000/api
 
 ![Swagger UI](./assets/images/swagger-ui.png)
 
-The `document` instance created by `SwaggerModule.createDocument()`is a serializable object conforming to the [OpenAPI Document](https://swagger.io/specification/#openapi-document). You can also save it as a JSON/YAML file, instead of hosting it via HTTP via the `SwaggerModule`.
+The `document` instance created by `SwaggerModule.createDocument()`is a serializable object conforming to the [OpenAPI Document](https://swagger.io/specification/#openapi-document). You can also save it as a `JSON`/`YAML` file, instead of hosting it via HTTP via the `SwaggerModule`.
+
+In order to get the JSON version just navigate to `http://localhost:3000/api-json`.
 
 ```json
 {
@@ -92,15 +94,18 @@ import { CalculateQuoteRequestDto, CarInsuranceQuoteResponseDto } from './dtos';
 export class QuoteController {
   @ApiCreatedResponse({
     description: 'The car insurance quote has been successfully created.',
+    type: CarInsuranceQuoteResponseDto,
   })
   @Post('calculate')
-  public async post(@Body() quote: CalculateQuoteRequestDto): Promise<any> {
+  public async post(
+    @Body() quote: CalculateQuoteRequestDto
+  ): Promise<CarInsuranceQuoteResponseDto> {
     ...
   }
 
   @ApiOkResponse({
-    type: CarInsuranceQuoteResponseDto,
     description: 'A car insurance quote.',
+    type: CarInsuranceQuoteResponseDto,
   })
   @Get(':id')
   public async getById(
@@ -144,7 +149,7 @@ export class CalculateQuoteRequestDto {
   @ApiProperty({
     type: Number,
     description: 'The ID of the car brand',
-    example: 18,
+    example: 1,
   })
   @IsNumber()
   carId: number;

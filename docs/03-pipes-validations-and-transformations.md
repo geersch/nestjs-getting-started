@@ -36,7 +36,9 @@ Let's declare a simple class to contain the incoming data. We also refer to thes
 Create a new folder called `dtos` inside of the `car-insurance-quote` folder and add a file called `calculate-quote-request.dto.ts` to it. 
 
 ```sh
+cd car-insurance-quote
 mkdir dtos
+cd dtos
 touch calculate-quote-request.dto.ts
 ```
 
@@ -103,24 +105,24 @@ curl --location --request POST 'http://localhost:3000/api/quote/calculate'
 
 ```json
 {
-    "statusCode": 400,
-    "message": [
-        "ageOfDriver must be a number conforming to the specified constraints",
-        "carId must be a number conforming to the specified constraints",
-        "purchasePrice must be a number conforming to the specified constraints"
-    ],
-    "error": "Bad Request"
+  "statusCode": 400,
+  "message": [
+    "ageOfDriver must be a number conforming to the specified constraints",
+    "carId must be a number conforming to the specified constraints",
+    "purchasePrice must be a number conforming to the specified constraints"
+  ],
+  "error": "Bad Request"
 }
 ```
 
 Let's correct the request.
 
-```
+```sh
 curl --location --request POST 'http://localhost:3000/api/quote/calculate' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "ageOfDriver": 18,
-    "carId": "0B66C9BC-C1CD-488D-93EA-237C9CA6DCCC",
+    "carId": 1,
     "purchasePrice": 35000
 }'
 hello, world!%
@@ -154,7 +156,7 @@ export function IsEqualTo(property: string, validationOptions?: ValidationOption
 
         defaultMessage(args: ValidationArguments) {
           const [relatedPropertyName] = args.constraints;
-          return `$property must match ${relatedPropertyName} exactly`;
+          return `${propertyName} must match ${relatedPropertyName} exactly`;
         },
       },
     });
@@ -169,7 +171,10 @@ export class ChangePasswordRequestDto {
   @IsString()
   @MinLength(4)
   @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, { message: 'password too weak' })
+  @Matches(
+    /((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, 
+    { message: 'password too weak' }
+  )
   password: number;
 
   @IsEqualTo('password')
@@ -181,7 +186,7 @@ export class ChangePasswordRequestDto {
 
 When a car insurance quote is submitted we persist it and assign a unique ID to it. Later we can use that ID to retrieve the car insurance quote via a separate route handler. Let's add that handler now.
 
-We also use DTOs to return responses. Let's declare a DTO to contain the response. Add a new file called `car-insurance-quote.response.dto` to the `dtos` folder and add the following code to it.
+We also use DTOs to return responses. Let's declare a DTO to contain the response. Add a new file called `car-insurance-quote.response.dto.ts` to the `dtos` folder and add the following code to it.
 
 ```ts
 export class CarInsuranceQuoteResponseDto {

@@ -119,6 +119,11 @@ Let's start by configuring the class-based middleware from the previous section.
 
 ```ts
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+...
+import {
+  ContentTypeMiddlewareConfiguration,
+  RequireContentTypeMiddleware,
+} from './require-content-type.middleware';
 
 @Module({
   imports: [...]
@@ -150,6 +155,16 @@ Middleware is not configured via the `@Module()` decorator but is configured via
 Using the `MiddlewareConsumer` instance we can now configure the middleware. Let's configure the middleware to be configured for all requests, no matter by which HTTP method (`GET`, `POST`...) they are invoked.
 
 ```ts
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
+...
+import { RequireContentTypeMiddleware } from './require-content-type.middleware';
+
+@Module({ ... })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
@@ -225,7 +240,7 @@ import * as compression from 'compression';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   ...
-  app.use(compression()));
+  app.use(compression());
   ...
   await app.listen(3000);
 }

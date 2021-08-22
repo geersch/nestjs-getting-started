@@ -33,18 +33,18 @@ To verify that `NVM` has been installed, execute:
 nvm -v
 ```
 
-Let's use `Node.js` 12 LTS. Its codename is `Erbium`.
+Let's use `Node.js` 14 LTS. Its codename is `Fermium`.
 
 https://nodejs.org/en/about/releases/
 
 ```sh
-nvm install lts/erbium
+nvm install lts/fermium
 ```
 
 Or use the `use` command if you already have it installed.
 
 ```sh
-nvm use lts/erbium
+nvm use lts/fermium
 ```
 
 Verify the `Node.js` installation.
