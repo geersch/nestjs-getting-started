@@ -349,4 +349,6 @@ For the Prisma-specific implementation, you still need to seed the database afte
  npx prisma db seed --preview-feature
 ```
 
+This command should be part of an automated CI/CD pipeline. I do not recommend running it locally to deploy changes to a production database. It is not good practice to have access to the production database URL locally. Consider making the Prisma schema the single source of truth. Have a look into deploying database changes with [prisma migrate](https://www.prisma.io/docs/guides/deployment/deploy-database-changes-with-prisma-migrate). 
+
 Yay, our application is now up and running on Heroku!
