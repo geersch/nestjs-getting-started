@@ -341,19 +341,21 @@ export class CarBrandRepository {
 Now that we've got Prisma up and running let's store this data in the database as well. Since we manually maintain the database schema and generate the models using introspection we need to create the database table first. Update the `init.sql` script and add the following DDL to it.
 
 ```sql
-CREATE TABLE IF NOT EXISTS car_brand (
-   id serial PRIMARY KEY,
-   name text NOT NULL,
-   minimumDriverAge INT NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL
+CREATE TABLE "car_brand" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "minimumdriverage" INTEGER NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 ```
 
-There are two ways to add the new table to the database. If you've already got the PostgreSQL Docker container up and running just use a tool such as [DBeaver](https://dbeaver.io/) to connect to the database and run the script against the `acme` database. Or if you don't mind recreating the database and losing the data within restart the Docker container. To do so, stop the Docker container, remove the postgres volume and start the container again.
+There are two ways to add the new table to the database. If you've already got the PostgreSQL Docker container up and running just use a tool such as [DBeaver](https://dbeaver.io/) to connect to the database and run the script against the `acme` database. Or if you don't mind recreating the database and losing the data within restart the Docker container. To do so, stop the Docker container, remove the postgres volume (e.g. `acme-api_postgres`) and start the container again.
 
 ```sh
 docker-compose down
-docker-volume rm postgres
+docker-volume rm acme-api_postgres
 docker-compose up -d
 ```
 
@@ -563,11 +565,15 @@ As with the `CarBrandRepository` we don't persist users but only retrieve them. 
 Before creating a Prisma-specific implementation of this repository, let's update our database. Add the following DDL to the `init.sql` file.
 
 ```sql
-CREATE TABLE IF NOT EXISTS "user" (
-   id serial PRIMARY KEY,
-   username text NOT NULL UNIQUE,
-   hashedpassword text NOT NULL
+CREATE TABLE "user" (
+    "id" SERIAL NOT NULL,
+    "username" TEXT NOT NULL,
+    "hashedpassword" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
 );
+
+CREATE UNIQUE INDEX "user.username_unique" ON "user"("username");
 ```
 
 Manually run this script to add the new `user` table to your database or recreate the Docker container (incl. volume) as explained in the previous section.

@@ -49,12 +49,14 @@ Be sure to configure these environment variables locally before starting the con
 The database name is set to `acme` and there is also a volume which points to an `init.sql` SQL script. Add a new file called `init.sql` to the root of the repository and add the following DDL to it.
 
 ```sql
-CREATE TABLE IF NOT EXISTS car_insurance_quote (
-   id serial PRIMARY KEY,
-   ageOfDriver INT NOT NULL,
-   monthlyPremium decimal(12,2) NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL,
-   createdOn TIMESTAMP NOT NULL
+CREATE TABLE "car_insurance_quote" (
+    "id" SERIAL NOT NULL,
+    "ageofdriver" INTEGER NOT NULL,
+    "monthlypremium" DECIMAL(12,2) NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+    "createdon" TIMESTAMP(6) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 ```
 

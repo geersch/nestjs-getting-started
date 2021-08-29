@@ -1,20 +1,28 @@
-CREATE TABLE IF NOT EXISTS car_insurance_quote (
-   id serial PRIMARY KEY,
-   ageOfDriver INT NOT NULL,
-   monthlyPremium decimal(12,2) NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL,
-   createdOn TIMESTAMP NOT NULL
+CREATE TABLE "car_insurance_quote" (
+    "id" SERIAL NOT NULL,
+    "ageofdriver" INTEGER NOT NULL,
+    "monthlypremium" DECIMAL(12,2) NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+    "createdon" TIMESTAMP(6) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
-CREATE TABLE IF NOT EXISTS car_brand (
-   id serial PRIMARY KEY,
-   name text NOT NULL,
-   minimumDriverAge INT NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL
+CREATE TABLE "car_brand" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "minimumdriverage" INTEGER NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
-CREATE TABLE IF NOT EXISTS "user" (
-   id serial PRIMARY KEY,
-   username text NOT NULL UNIQUE,
-   hashedpassword text NOT NULL
+CREATE TABLE "user" (
+    "id" SERIAL NOT NULL,
+    "username" TEXT NOT NULL,
+    "hashedpassword" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
 );
+
+CREATE UNIQUE INDEX "user.username_unique" ON "user"("username");

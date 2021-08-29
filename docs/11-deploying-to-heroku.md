@@ -223,26 +223,34 @@ Now, submit the order form. After the `Heroku Postgres` add-on has been installe
 Take note of the host, database, user, and password. You'll need them to configure the Heroku environment variables later. For now, you'll need them to connect to the database directly using a tool such as [DBeaver](https://dbeaver.io). Go ahead, start the tool, configure a new connection to the PostgreSQL database, and run the following SQL script (`init.sql`) to create the `car_insurance_quote`, `car_brand`, and `user` tables.
 
 ```sql
-CREATE TABLE IF NOT EXISTS car_insurance_quote (
-   id serial PRIMARY KEY,
-   ageOfDriver INT NOT NULL,
-   monthlyPremium decimal(12,2) NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL,
-   createdOn TIMESTAMP NOT NULL
+CREATE TABLE "car_insurance_quote" (
+    "id" SERIAL NOT NULL,
+    "ageofdriver" INTEGER NOT NULL,
+    "monthlypremium" DECIMAL(12,2) NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+    "createdon" TIMESTAMP(6) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
-CREATE TABLE IF NOT EXISTS car_brand (
-   id serial PRIMARY KEY,
-   name text NOT NULL,
-   minimumDriverAge INT NOT NULL,
-   yearlyPremium decimal(12,2) NOT NULL
+CREATE TABLE "car_brand" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "minimumdriverage" INTEGER NOT NULL,
+    "yearlypremium" DECIMAL(12,2) NOT NULL,
+
+    PRIMARY KEY ("id")
 );
 
-CREATE TABLE IF NOT EXISTS "user" (
-   id serial PRIMARY KEY,
-   username text NOT NULL UNIQUE,
-   hashedpassword text NOT NULL
+CREATE TABLE "user" (
+    "id" SERIAL NOT NULL,
+    "username" TEXT NOT NULL,
+    "hashedpassword" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
 );
+
+CREATE UNIQUE INDEX "user.username_unique" ON "user"("username");
 ```
 
 Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku. For `Prisma` you don't need to specify any additional options.
