@@ -316,6 +316,8 @@ git push heroku master:master
 
 Heroku will automatically install the dependencies, build the application, prune the development dependencies, inspect the `Procfile` and launch the application. The build output will list the application's URL when the deployment is done.
 
+Note that `prisma generate` is automatically invoked when the `@prisma/client` package is installed during the build process. This way you are sure that the Prisma Client is generated using the latest version of schema.
+
 ```sh
 ...
 remote: -----> Build succeeded!
