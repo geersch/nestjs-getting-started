@@ -64,16 +64,26 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 3. [Introducing Knex](./docs/09-add-postgresql-with-knex.md)
 4. [Persisting the Car Insurance Quotes](./docs/09-add-postgresql-with-knex.md)
 
+## Prisma
+
+1. [Introducing Prisma](./docs/10-prisma.md)
+2. [Prisma Schema](./docs/10-prisma.md)
+3. [Prisma Client](./docs/10-prisma.md)
+4. [Persisting the Car Insurance Quotes](./docs/10-prisma.md)
+5. [Car Brand Model](./docs/10-prisma.md)
+6. [Seeding the Database](./docs/10-prisma.md)
+7. [User Model](./docs/10-prisma.md)
+
+## Deploying to Heroku
+
+1. [Prerequisites](./docs/11-deploying-to-heroku.md)
+2. [Environment Variables](./docs/11-deploying-to-heroku.md)
+3. [The Procfile](./docs/11-deploying-to-heroku.md)
+4. [Creating a Heroku Application](./docs/11-deploying-to-heroku.md)
+5. [Setting up a PostgreSQL Database](./docs/11-deploying-to-heroku.md)
+6. [Application Environment](./docs/11-deploying-to-heroku.md)
+7. [Deployment](./docs/11-deploying-to-heroku.md)
+
 ## Other Building Blocks
 
-1. [Other Building Blocks](./docs/10-other-building-blocks.md)
-
-## Bonus - Deploying to Heroku
-
-1. [Prerequisites](/docs/11-bonus-deploying-to-heroku.md)
-2. [Environment Variables](/docs/11-bonus-deploying-to-heroku.md)
-3. [The Procfile](/docs/11-bonus-deploying-to-heroku.md)
-4. [Creating a Heroku Application](/docs/11-bonus-deploying-to-heroku.md)
-5. [Setting up a PostgreSQL Database](/docs/11-bonus-deploying-to-heroku.md)
-6. [Application Environment](/docs/11-bonus-deploying-to-heroku.md)
-7. [Deployment](/docs/11-bonus-deploying-to-heroku.md)
+1. [Other Building Blocks](./docs/12-other-building-blocks.md)

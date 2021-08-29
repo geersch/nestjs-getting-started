@@ -1,4 +1,4 @@
-# Bonus: Deploying to Heroku
+# Deploying to Heroku
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ Let's verify if the installation worked.
 
 ```sh
 heroku --version
-heroku/7.53.0 darwin-x64 node-v12.21.0
+heroku/7.59.0 darwin-x64 node-v12.21.0
 ```
 
 You should see `heroku/major.minor.path` in the output.
@@ -44,18 +44,21 @@ You should see `heroku/major.minor.path` in the output.
 
 There are some places in the code where certain values such as the database name, secret to sign JWT tokens, a global prefix for every HTTP route path...etc. are hardcoded. We need to replace these hardcoded values with environment variables that we can configure on the hosting environment. 
 
-In total, we can identify 8 such variables.
+During this course, we've used the following environment variables.
 
 | Name              | Description                           | Type    | Default value |
 | ------------------| ------------------------------------- | ------- | ------------- |
 | PORT              | port on which the HTTP server listens | number  | `3000`        |
 | GLOBAL_PREFIX     | prefix for every HTTP route path.     | string  | `api`         |
+| DATABASE_URL      | URL to the datab ase                  | string  | /             |
 | POSTGRES_HOST     | PostgreSQL Database Host              | string  | /             |
 | POSTGRES_USER     | PostgreSQL Database User              | string  | /             |
 | POSTGRES_PASSWORD | PostgreSQL Database Password          | string  | /             |
 | DB_NAME           | PostgreSQL Database Name              | string  | /             |
 | JWT_SECRET        | Secret used to sign JWT tokens        | string  | /             |
 | JWT_EXPIRES_IN    | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"  | string  | `1h` |
+
+**Remark**: If you prefer `Knex`, you'll need the `POSTGRES_HOST` and `DB_NAME` environment variables. For `Prisma`, you'll only need the `DATABASE_URL` environment variable. The `docker-compose.yml` file also uses the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables.
 
 These hardcoded values are either located in the application's main entry file (`main.ts`) or the root module (`app.module.ts`).
 
@@ -99,7 +102,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 ```
 
-Time to move on to the root module (`main.ts`). Again import `getenv` and use it to read the values from the environment. In this case, a fallback value is only configured for the `JWT_EXPIRES_IN` environment variable.
+Time to move on to the root module (`app.module.ts`). Again import `getenv` and use it to read the values from the environment. In this case, a fallback value is only configured for the `JWT_EXPIRES_IN` environment variable.
 
 ```ts
 ...
@@ -131,6 +134,8 @@ import * as getenv from 'getenv';
 export class AppModule {}
 ```
 
+**Remark**: If you use `Prisma` instead of `Knex`, you can remove the `KnexModule.forRootAsync()` call.
+
 The `getenv` package offers other methods such as `int`, `float`, `bool`...etc. if you want to cast an environment variable to a different type. Our environment values all happen to be strings.
 
 If you start the application now you'll receive an error.
@@ -144,15 +149,17 @@ First, you need to set the environment variables.
 
 ```sh
 export JWT_SECRET=very-top-secret
+# Knex
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=superuser_username_for_postgresql
 export POSTGRES_PASSWORD=superuser_password_for_postgresql
 export DB_NAME=acme
+
+# Prisma
+export DATABASE_URL=postgresql://user:paswword@host:port/database_name
 ```
 
 Now the application can read the variables from the environment and it will start!
-
-**Remark**: In [chapter 9](./09-add-postgresql-with-knex.md) we also used two environment variables, `POSTGRES_USER` and `POSTGRES_PASSWORD` in the `docker-compose.yml` file. You can leave them or you can replace them with the new `POSTGRES_USER` and `POSTGRES_PASSWORD` variables.
 
 ## The Procfile
 
@@ -213,7 +220,7 @@ Now, submit the order form. After the `Heroku Postgres` add-on has been installe
 
 ![Heroku Postgres - Database Credentials](./assets/images/heroku-postgres-database-credentials.png)
 
-Take note of the host, database, user, and password. You'll need them to configure the Heroku environment variables later. For now, you'll need them to connect to the database directly using a tool such as [DBeaver](https://dbeaver.io). Go ahead, start the tool, configure a new connection to the PostgreSQL database, and run the following SQL script to create the `car_insurance_quote` table.
+Take note of the host, database, user, and password. You'll need them to configure the Heroku environment variables later. For now, you'll need them to connect to the database directly using a tool such as [DBeaver](https://dbeaver.io). Go ahead, start the tool, configure a new connection to the PostgreSQL database, and run the following SQL script (`init.sql`) to create the `car_insurance_quote`, `car_brand`, and `user` tables.
 
 ```sql
 CREATE TABLE IF NOT EXISTS car_insurance_quote (
@@ -223,9 +230,22 @@ CREATE TABLE IF NOT EXISTS car_insurance_quote (
    yearlyPremium decimal(12,2) NOT NULL,
    createdOn TIMESTAMP NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS car_brand (
+   id serial PRIMARY KEY,
+   name text NOT NULL,
+   minimumDriverAge INT NOT NULL,
+   yearlyPremium decimal(12,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "user" (
+   id serial PRIMARY KEY,
+   username text NOT NULL UNIQUE,
+   hashedpassword text NOT NULL
+);
 ```
 
-Last, but not least we need to modify the bit of code that creates the connection to the database. Open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku.
+Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku. For `Prisma` you don't need to specify any additional options.
 
 ```ts
 @Module({
@@ -257,11 +277,22 @@ We're almost there. One last thing to do before we deploy. Remember those enviro
 
 ![Heroku Config Vars](./assets/images/heroku-config-vars.png)
 
-You'll notice that Heroku added a `DATABASE_URL` environment variable when you added the `Heroku Postgres` add-on. Ignore this environment variable. Now, add the environment variables listed above here.
+You'll notice that Heroku created a `DATABASE_URL` environment variable when you added the `Heroku Postgres` add-on. Handy if you use `Prisma`, it is already set for you! Ignore this environment variable if you use `Knex`. Now, add the rest of the environment variables listed above. If you use `Prisma`, you don't need to configure the `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD` and `DB_NAME` variables.
 
 ![Heroku Config Vars](./assets/images/heroku-config-vars-overview.png)
 
 ## Deployment
+
+If you use `Prisma` and you placed the Prisma schema file (`schema.prisma`) in a folder at the root of your repository you must exclude this folder from the build so that it does not wind up in the output directory (`dist`). Just add the folder (`prisma`) to the `exclude` array in the `tsconfig.build.json` file.
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "prisma"]
+}
+```
+
+This way we are sure only the contents of the `src` folder are compiled and copied into the output directory. This way the `start:prod` script can locate the `main` script and start the application. (`node dist/main`).
 
 Finally, we are ready to deploy our application. Under the `Settings` tab of your Heroku application copy the `Heroku GIT URL`. Add a new GIT remote to your local repository with the name `heroku`.
 
@@ -272,7 +303,7 @@ git remote add heroku https://git.heroku.com/nestjs-getting-started.git
 You should now have two GIT remotes configured for your local repository, `origin` and `heroku`.
 
 ```sh
-git remote ls
+git remote
 heroku
 origin
 ```
@@ -301,5 +332,11 @@ remote:        https://nestjs-getting-started.herokuapp.com/ deployed to Heroku
 Open the URL in your browser and append the global prefix `api` to it.
 
 ![Heroku Acme API](./assets/images/heroku-acme-api.png)
+
+For the Prisma-specific implementation, you still need to seed the database after the first deployment. Just copy the database URI from the database credentials section in the PostgreSQL resource on Heroku. Configure the `DATABASE_URL` environment locally and run the Prisma seed command.
+
+```sh
+ npx prisma db seed --preview-feature
+```
 
 Yay, our application is now up and running on Heroku!
