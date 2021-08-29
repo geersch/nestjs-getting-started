@@ -253,7 +253,7 @@ CREATE TABLE "user" (
 CREATE UNIQUE INDEX "user.username_unique" ON "user"("username");
 ```
 
-Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku. For `Prisma` you don't need to specify any additional options.
+Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku.
 
 ```ts
 @Module({
@@ -278,6 +278,10 @@ Last, but not least for `Knex` we need to modify the bit of code that creates th
 })
 export class AppModule {}
 ```
+
+For `Prisma` you don't need to specify any additional options. It will try to connect with TLS if possible but accepts plain text connections if not. If you want to configure an SSL connection, please consult the Prisma documentation:
+
+https://www.prisma.io/docs/concepts/database-connectors/postgresql
 
 ## Application Environment
 
