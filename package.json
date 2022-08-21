@@ -7,10 +7,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/geersch/nestjs-course.git"
+    "url": "git+https://github.com/geersch/nestjs-getting-started.git"
   },
   "author": "Christophe Geers",
-  "homepage": "https://github.com/geersch/nestjs-course#readme",
+  "homepage": "https://github.com/geersch/nestjs-getting-started#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
