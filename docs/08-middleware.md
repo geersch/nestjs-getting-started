@@ -7,17 +7,21 @@ Middleware is nothing more than a function that is invoked **before** a route ha
 ```ts
 import { Request, Response, NextFunction } from 'express';
 
-export function requireJsonContentType(req: Request, res: Response, next: NextFunction) {
+export function requireJsonContentType(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   // The req argument represents the HTTP request.
   // The res argument represents the HTTP response.
   // The next argument is the next middleware function in the application's request-response cycle.
-  
+
   const contentType = req.headers['content-type'];
   if (contentType !== 'application/json') {
     // Prematurely end the request-response-cycle.
     res.status(400).send('Content-Type application/json is required.');
     return;
-  } 
+  }
 
   // Invoke the next middleware.
   next();
@@ -26,7 +30,7 @@ export function requireJsonContentType(req: Request, res: Response, next: NextFu
 
 If you are using `ExpressJS` as the underlying HTTP framework you can import the `Request`, `Response`, and `NextFunction` type declarations from Express (`@types/express`) when creating middleware and use them to denote the types of the arguments of the middleware.
 
-The full syntax for middleware `middleware(err, req, res, next)`, includes an extra argument to deal with error handling. Normally you configure such a middleware function last. However, as we've seen in the previous chapter NestJS provides a global exception filter for this purpose. You don't need to use this type of middleware. 
+The full syntax for middleware `middleware(err, req, res, next)`, includes an extra argument to deal with error handling. Normally you configure such a middleware function last. However, as we've seen in the previous chapter NestJS provides a global exception filter for this purpose. You don't need to use this type of middleware.
 
 `Fastify` v3.0.0 does not support middleware out-of-the-box. It requires an external plugin such as [fastify-express](https://github.com/fastify/fastify-express) or [middie](https://github.com/fastify/middie). The syntax style is the same as ExpressJS / Connect. Methods added by Express to the enhanced version of `req` and `res` are not supported in Fastify middlewares. `Fastify` also does **not** support the full syntax.
 
@@ -51,7 +55,7 @@ export class RequireJsonContentTypeMiddleware implements NestMiddleware {
 }
 ```
 
-Let's provide some typing. The `ExpressJS` type declarations (`@types/express`) were installed when we generated a new NestJS project using the CLI at the start of the course.
+Let's provide some typings. The `ExpressJS` type declarations (`@types/express`) were installed when we generated a new NestJS project using the CLI at the start of the course.
 
 ```ts
 import { Injectable, NestMiddleware } from '@nestjs/common';
@@ -65,7 +69,7 @@ export class RequireJsonContentTypeMiddleware implements NestMiddleware {
 }
 ```
 
-We can port the remaining of the original middleware function as is.
+We can port the remainder of the original middleware function as is.
 
 ```ts
 import { Injectable, NestMiddleware } from '@nestjs/common';
@@ -78,7 +82,7 @@ export class RequireJsonContentTypeMiddleware implements NestMiddleware {
     if (contentType !== 'application/json') {
       res.status(400).send('Content-Type application/json is required.');
       return;
-    } 
+    }
     next();
   }
 }
@@ -96,14 +100,16 @@ export class ContentTypeMiddlewareConfiguration {
 
 @Injectable()
 export class RequireContentTypeMiddleware implements NestMiddleware {
-  constructor(private readonly config: ContentTypeMiddlewareConfiguration) { }
+  constructor(private readonly config: ContentTypeMiddlewareConfiguration) {}
 
   public use(req: Request, res: Response, next: NextFunction): void {
     const contentType = req.headers['content-type'];
     if (contentType !== this.config.requiredContentType) {
-      res.status(400).send(`Content-Type ${this.config.requiredContentType} is required.`);
+      res
+        .status(400)
+        .send(`Content-Type ${this.config.requiredContentType} is required.`);
       return;
-    } 
+    }
     next();
   }
 }
@@ -115,7 +121,7 @@ Let's see how we can configure the middleware in the next section.
 
 ## Configuring Middleware
 
-Let's start by configuring the class-based middleware from the previous section. Open the application root module (`app.module.ts`). The `AppModule` must now implement the `NestModule` interface from the `@nestjs/common` module.
+Open the application root module (`app.module.ts`). The `AppModule` must now implement the `NestModule` interface from the `@nestjs/common` module.
 
 ```ts
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
@@ -142,7 +148,7 @@ export class AppModule implements NestModule {
 }
 ```
 
-The `NestModule` requires us to implement one method called `configure()`. 
+The `NestModule` requires us to implement one method called `configure()`.
 
 ```ts
 export interface NestModule {
@@ -150,7 +156,7 @@ export interface NestModule {
 }
 ```
 
-Middleware is not configured via the `@Module()` decorator but is configured via the `MiddlewareConsumer` instance provided to the `configure()` method as its only argument. NestJS call the `configure()` method of the module during the app life cycle when it loads the modules. Also, note that an extra provider was configured in the `AppModule` so that NestJS can inject the configuration into the middleware. 
+Middleware is not configured via the `@Module()` decorator but is configured via the `MiddlewareConsumer` instance provided to the `configure()` method as its only argument. NestJS call the `configure()` method of the module during the app life cycle when it loads the modules. Also, note that an extra provider was configured in the `AppModule` so that NestJS can inject the configuration into the middleware.
 
 Using the `MiddlewareConsumer` instance we can now configure the middleware. Let's configure the middleware to be configured for all requests, no matter by which HTTP method (`GET`, `POST`...) they are invoked.
 
@@ -162,7 +168,10 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 ...
-import { RequireContentTypeMiddleware } from './require-content-type.middleware';
+import {
+  ContentTypeMiddlewareConfiguration,
+  RequireContentTypeMiddleware,
+} from './require-content-type.middleware';
 
 @Module({ ... })
 export class AppModule implements NestModule {
@@ -178,8 +187,8 @@ Make sure to recompile the application and head on over to the Swagger UI to tes
 
 You can configure the paths to which the middleware will be applied via the `forRoutes()` method in a couple of ways.
 
-* `forRoutes('quote')`: Set up the middleware for the `/quote` route handlers that are defined in the `QuoteController`.
-* `forRoutes({ path: '*', method: RequestMethod.ALL })`: Using the `*` wildcard set up the middleware for all route handlers of the application. With the `method` property you can specify for which HTTP methods ( `GET`, `POST`...) the middleware should be applied. You can use other wildcards such as `?`, `+`, `*` and `()`. Hyphens (`-`) and dots (`.`) are interpreted as literal characters.
+- `forRoutes('quote')`: Set up the middleware for the `/quote` route handlers that are defined in the `QuoteController`.
+- `forRoutes({ path: '*', method: RequestMethod.ALL })`: Using the `*` wildcard set up the middleware for all route handlers of the application. With the `method` property you can specify for which HTTP methods ( `GET`, `POST`...) the middleware should be applied. You can use other wildcards such as `?`, `+`, `*` and `()`. Hyphens (`-`) and dots (`.`) are interpreted as literal characters.
 
 You can also exclude routes to make sure that the middleware is not applied to them.
 
@@ -216,11 +225,15 @@ You can also configure multiple middlewares to be executed sequentially, simply 
 
 ```ts
 consumer
-  .apply(RequireContentTypeMiddleware, LoggerMiddleWare, myFunctionalMiddleware())
+  .apply(
+    RequireContentTypeMiddleware,
+    LoggerMiddleWare,
+    myFunctionalMiddleware()
+  )
   .forRoutes({ path: '*', method: RequestMethod.ALL });
 ```
 
-As a final step let's remote the middleware that we just configured. We don't require it for the car insurance quote application.
+As a final step let's remove the middleware that we just configured. We don't require it for the car insurance quote application.
 
 ## ExpressJS Middleware
 
@@ -248,4 +261,3 @@ bootstrap();
 ```
 
 You can consult the [ExpressJS middleware](https://expressjs.com/en/resources/middleware.html) documentation for a list of middleware modules maintained by the ExpressJS team.
- 

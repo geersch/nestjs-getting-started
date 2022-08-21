@@ -14,7 +14,7 @@ You can also use shorthand syntax.
 nest n acme-api
 ```
 
-This command will initialize a new Nest project. It will prompt you to ask which package manager you prefer. 
+This command will initialize a new Nest project. It will prompt you to ask which package manager you prefer.
 
 ```sh
 ? Which package manager would you ❤️  to use? (Use arrow keys)
@@ -61,8 +61,12 @@ The required dependencies (`node_modules`) are already installed and a few boile
 ├── test
 │   ├── app.e2e-spec.ts
 │   └── jest-e2e.json
+├── .eslintrc.js
+├── .gitignore
+├── .prettierrc
 ├── nest-cli.json
 ├── package.json
+├── README.md
 ├── tsconfig.build.json
 ├── tsconfig.json
 └── yarn.lock
@@ -70,23 +74,23 @@ The required dependencies (`node_modules`) are already installed and a few boile
 
 Let's focus on the most important files.
 
-| File  | Purpose |
-| ------------- | ------------- |
-| `app.controller.ts`  | A basic controller. |
-| `app.controller.spec.ts`  | Unit tests for the controller. |
-| `app.module.ts`  | The root module to bootstrap the application.  |
-| `app.service.ts`  | A basic service that can be injected.  |
-| `main.ts`  | The entry file of the application which uses `NestFactory` to create a Nest application instance.  |
-| `package.json`  | The application manifest. |
-| `nest-cli.json` | [Configuration for the Nest CLI.](https://json.schemastore.org/nest-cli) |
-| `tsconfig.json` & `tsconfig.build.json`  | TypeScript configuration. Used by the Nest CLI to build the application.  |
-| `yarn.lock`  | Lock file to ensure consistent installs across machines. (`package-lock.json` if you chose `NPM` as the package manager.) |
+| File                                    | Purpose                                                                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `app.controller.ts`                     | A basic controller.                                                                                                       |
+| `app.controller.spec.ts`                | Unit tests for the controller.                                                                                            |
+| `app.module.ts`                         | The root module to bootstrap the application.                                                                             |
+| `app.service.ts`                        | A basic service that can be injected.                                                                                     |
+| `main.ts`                               | The entry file of the application which uses `NestFactory` to create a Nest application instance.                         |
+| `package.json`                          | The application manifest.                                                                                                 |
+| `nest-cli.json`                         | [Configuration for the Nest CLI.](https://json.schemastore.org/nest-cli)                                                  |
+| `tsconfig.json` & `tsconfig.build.json` | TypeScript configuration. Used by the Nest CLI to build the application.                                                  |
+| `yarn.lock`                             | Lock file to ensure consistent installs across machines. (`package-lock.json` if you chose `NPM` as the package manager.) |
 
 Via the `nest-cli.json` you can configure your project's structure and the behavior of the Nest CLI. The NestCLI also translates any configured paths in `tsconfig.json`. If you don't build your application via the Nest CLI you will have to do this translation yourself or use a module such as [tsconfig-paths](https://github.com/dividab/tsconfig-paths). NestJS also uses `tsconfig-paths` but via its CLI it will translate these paths during compilation. This is out of scope for this course, but it is best to be aware of it.
 
 https://github.com/nestjs/nest-cli/blob/83387f951eb26edcfe350183fe6780ce1bd57c0a/lib/compiler/compiler.ts#L49
 
-It contains one `async` function, which `bootstraps` our application. Let's take a deeper look at the application's entry file `main.ts`. 
+The application's entry file `main.ts` contains one `async` function, which `bootstraps` our application. Let's take a deeper look.
 
 ```ts
 import { NestFactory } from '@nestjs/core';
@@ -101,7 +105,7 @@ bootstrap();
 
 The static `create` method of `NestFactory` is used to create a NestJS application instance (`INestApplication`). We only need to pass in our root application module's class.
 
-Nest aims to be platform-agnostic. NestJS can work with any `Node.js` HTTP framework once an adapter is created. Out-of-the-box NestJS supports two HTTP platforms: [ExpressJS](https://expressjs.com/) and [Fastify](https://www.fastify.io/). 
+Nest aims to be platform-agnostic. NestJS can work with any `Node.js` HTTP framework once an adapter is created. Out-of-the-box NestJS supports two HTTP platforms: [ExpressJS](https://expressjs.com/) and [Fastify](https://www.fastify.io/).
 
 By default NestJS uses `ExpressJS`, but you can easily change this. Using `Fastify` instead of `ExpressJS` is only a minute of work.
 
@@ -131,7 +135,7 @@ bootstrap();
 
 NestJS's module system is very similar to that of Angular, but there are some differences. Like Angular NestJS uses [decorators](https://www.typescriptlang.org/docs/handbook/decorators.html) to provide metadata ([reflect-metadata](https://github.com/rbuckton/reflect-metadata)) to organize the application structure, configure the routing for the API endpoints, configure guards, validation...etc.
 
-A module is a class annotated with a `@Module` decorator. The application must have at least one **root module**. The root module is the starting point Nest uses to build the application graph. This graph is the internal data structure that Nest uses to resolve module and provider relationships and dependencies. It is strongly recommended to use modules to organizes your application. Encapsulate closely related functionality into a separate module.
+A module is a class annotated with a `@Module` decorator. The application must have at least one **root module**. The root module is the starting point Nest uses to build the application graph. This graph is the internal data structure that Nest uses to resolve module and provider relationships and dependencies. It is strongly recommended to use modules to organize your application. Encapsulate closely related functionality into a separate module.
 
 Let's take a look at our application's root module.
 
@@ -144,19 +148,19 @@ import { AppService } from './app.service';
   imports: [],
   controllers: [AppController],
   providers: [AppService],
-  exports: []
+  exports: [],
 })
 export class AppModule {}
 ```
 
 The `@Module()` decorator has a single required parameter used to describe the module. This object consists out of the following properties
 
-| Property | Purpose |
-| ------------- | ------------- |
-| `imports`  | List of imported modules. The exported providers of the imported modules are imported. |
-| `controllers`  | List of controllers defined in this module. |
-| `providers`  | List of providers that are instantiated by the Nest injector and can be shared across this module. |
-| `exports`  | Subset of providers provided by this module that is exported and can be imported by other modules. |
+| Property      | Purpose                                                                                            |
+| ------------- | -------------------------------------------------------------------------------------------------- |
+| `imports`     | List of imported modules. The exported providers of the imported modules are imported.             |
+| `controllers` | List of controllers defined in this module.                                                        |
+| `providers`   | List of providers that are instantiated by the Nest injector and can be shared across this module. |
+| `exports`     | Subset of providers provided by this module that is exported and can be imported by other modules. |
 
 By default, a module encapsulates its providers. It is impossible to inject providers that are not part of the current module or are not exported by imported modules. Providers exported by a module are considered as part of that module's public interface/contract/API.
 
@@ -203,18 +207,16 @@ You will notice that the CLI created a new directory inside of the `src/` folder
         └── car-insurance-quote.module.ts
 ```
 
-The new module was also automatically registered in the application's root module and imported. 
+The new module was also automatically registered in the application's root module and imported.
 
 ```ts
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CarInsuranceQuoteModule } from './car-insurance-quote/car-insurance-quote.module';
 
 @Module({
   imports: [CarInsuranceQuoteModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
 ```
@@ -251,7 +253,7 @@ nest g co quote car-insurance-quote --flat --no-spec --dry-run
 
 ## Endpoint to save car insurance quotes
 
-The newly created controller only contains a few lines of code. Via the `@Controller()` decorator you can specify the prefix/path that will be appended to the application root path. In this case, you would be able to call the endpoints of this controller via `http://localhost:3000/quote`.
+The newly created controller only contains a few lines of code. Via the `@Controller()` decorator you can specify the prefix/path that will be appended to the application root path. In this case, you will be able to call the endpoints of this controller via `http://localhost:3000/quote`.
 
 ```ts
 import { Controller } from '@nestjs/common';
@@ -274,9 +276,9 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Now we can call the endpoints of our new controller via requests to `http://localhost:3000/api/quote`. Let's add a method to the controller that we can call to save new car insurance quotes and test if we send requests to it.
+Now we can call the endpoints of our new controller via requests to `http://localhost:3000/api/quote`. Let's add a method to the controller that we can call to save new car insurance quotes and test if we can send requests to it.
 
-NestJS provides decorators for all standard HTTP methods: `@Get()`, `@Post()`, `@Put`, `@Delete()`, `@Patch()`, `@Options()` and `@Head()`. Including one special decorator called `@All()` which defines that an endpoint handles all of them. Each of these decorators accepts an optional prefix/path that is again appended to the path if you wish to call the endpoint.
+NestJS provides decorators for all standard HTTP methods: `@Get()`, `@Post()`, `@Put`, `@Delete()`, `@Patch()`, `@Options()` and `@Head()`. Including one special decorator called `@All()` which defines that an endpoint handles all of them. Each of these decorators accepts an optional prefix/path that is appended to the path.
 
 ```ts
 import { Controller, Post } from '@nestjs/common';
@@ -290,7 +292,7 @@ export class QuoteController {
 }
 ```
 
-We can now save new quotes by sending a `POST` request to `http://localhost:3000/api/quote/calculate`. Let's test this. 
+We can now save new quotes by sending a `POST` request to `http://localhost:3000/api/quote/calculate`. Let's test this.
 
 Start the application.
 
@@ -302,6 +304,11 @@ And make a `cURL` request.
 
 ```sh
 curl --location --request POST 'http://localhost:3000/api/quote/calculate'
+```
+
+Output:
+
+```sh
 hello, world!%
 ```
 
@@ -313,9 +320,9 @@ curl --location --request GET 'http://localhost:3000/api/quote/calculate'
 
 ```json
 {
-  "statusCode":404,
-  "message":"Cannot GET /api/quote/calculate",
-  "error":"Not Found"
+  "statusCode": 404,
+  "message": "Cannot GET /api/quote/calculate",
+  "error": "Not Found"
 }
 ```
 
@@ -324,12 +331,14 @@ The response status code is always `200` by default, except for `POST` requests 
 ```ts
 import { Controller, HttpCode, Post } from '@nestjs/common';
 
-@Post('calculate')
-@HttpCode(201)
-public async post(): Promise<any> {
-  return 'hello, world!';
+@Controller('quote')
+export class QuoteController {
+  @Post('calculate')
+  @HttpCode(201)
+  public async post(): Promise<any> {
+    return 'hello, world!';
+  }
 }
 ```
-
 
 Of course, if we want to calculate a car insurance quote we need to send some data along with the request and validate it. Let's do this in the next module [Pipes and Validations](./03-pipes-validations-and-transformations.md).

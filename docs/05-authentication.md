@@ -4,10 +4,10 @@
 
 One of the requirements is that only authenticated users should be able to calculate and retrieve car insurance quotes. Right now everybody can calculate quotes and retrieve them. We need to protect the following endpoints:
 
-* `POST /api/quote/calculate`: endpoint to calculate a car insurance quote
-* `GET /api/quote/:id`: endpoint to retrieve a car insurance quote
+- `POST /api/quote/calculate`: endpoint to calculate a car insurance quote
+- `GET /api/quote/:id`: endpoint to retrieve a car insurance quote
 
-A user should first authenticate by providing their credentials such as a username and password. When these credentials are verified they'll receive a [JSON Web Token](https://jwt.io/) (JWT). Once authenticated, the JWT can be sent as a bearer token in the authorization header. We'll protect the aforementioned route handlers so that they are protected and can only be called if the request includes a valid JWT.
+A user should first authenticate by providing their credentials such as a username and password. When these credentials are verified they'll receive a [JSON Web Token](https://jwt.io/) (JWT). Once authenticated, the JWT can be sent as a bearer token in the authorization header. We'll make sure the route handlers are protected and can only be called if the request includes a valid JWT.
 
 To handle the authentication we'll use [Passport](https://github.com/jaredhanson/passport). Using the `@nestjs/passport` package it is easy to integrate into a NestJS application. Passport is `ExpressJS`-compatible authentication middleware for `Node.js`. Its sole purpose is to authenticate requests, which it does through an extensible set of plugins knows as `strategies`. You simply provide Passport a request to authenticate and it provides hooks for controlling what occurs when authentication succeeds or fails.
 
@@ -53,7 +53,7 @@ The authentication service is responsible for retrieving the user's information 
 nest g s users authentication --no-spec --flat
 ```
 
-The implementation of the `UsersService` is simple. We just hardcode a list of users and provide one public method (`findByUsername`) to find user data via a username. The user data is typed through the `User` interface.
+The implementation of the `UsersService` is simple. We just hardcode a list of users and provide one public method (`findByUsername`) to find a user by username. The user data is typed through the `User` interface.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -77,7 +77,7 @@ export class UsersService {
 }
 ```
 
-Now we are ready to implement our `AuthenticationService` we generated earlier. With the use of NestJS's dependency injection system, we inject the `UserService` via its constructor. We then provide a `validate(username, password)` method to validate a user's credentials. If a user could be found and the passwords match, then an `AuthenticatedUser` object is returned, otherwise `null`.
+Now we are ready to implement our `AuthenticationService` we generated earlier. With the use of NestJS's dependency injection system, we inject the `UserService` through its constructor. We then provide a `validate(username, password)` method to validate a user's credentials. If a user could be found and the passwords match, then an `AuthenticatedUser` object is returned, otherwise `null`.
 
 ```ts
 import { Injectable } from '@nestjs/common';
@@ -91,7 +91,7 @@ export class AuthenticationService {
 
   public async validate(
     username: string,
-    password: string,
+    password: string
   ): Promise<AuthenticatedUser | null> {
     const user: User = await this.usersService.findByUsername(username);
     if (user?.password === password) {
@@ -107,7 +107,7 @@ export class AuthenticationService {
 }
 ```
 
-**Remark**: In reality you do **not** want to hardcode your users. You store them in a database and you never store the clear text password. At a minimum, you hash the password using a salt. You only store this one-way hash. You then hash the submitted password using the user's salt and compare the hashes. Even better would be to not even roll your own authentication, but to use an [identity server](https://github.com/IdentityServer) that manages identifies for you and handles authentication. There are many caveats involved in writing your own authentication.
+**Remark**: In reality you do **not** want to hardcode your users. You store them in a database and you never store the clear text password. At a minimum, you hash the password using a salt. You only store this one-way hash. You then hash the submitted password using the user's salt and compare the hashes. Even better would be to not even roll your own authentication, but to use an [identity server](https://github.com/IdentityServer) that manages identities for you and handles authentication. There are many caveats involved in writing your own authentication.
 
 Now we can finally implement a local strategy to validate a user's credentials. The `@nestjs/passport` package provides a `PassportStrategy` class that we can extend for this purpose. Add a new file called `local.strategy.ts` to the authentication module. Add the following code to it.
 
@@ -128,7 +128,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   public async validate(
     username: string,
-    password: string,
+    password: string
   ): Promise<AuthenticatedUser> {
     const user: AuthenticatedUser | null =
       await this.authenticationService.validate(username, password);
@@ -141,7 +141,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 }
 ```
 
-The `LocalStrategy` class extends from the `PassportStrategy` class imported from the `@nestjs/passport` package. We need to pass it the Passport strategy we'll be using. In this case, we are importing a strategy from the `passport-local` package. 
+The `LocalStrategy` class extends from the `PassportStrategy` class imported from the `@nestjs/passport` package. We need to pass it the Passport strategy we'll be using. In this case, we are importing a strategy from the `passport-local` package.
 
 We only need to implement the `validate(username, passport)` method. It uses the `AuthenticationService`, which was injected via constructor injection to validate a user's credentials. If valid it will return an `AuthenticatedUser` instance, otherwise it will throw a `UnauthorizedException` which NestJS will catch and translate into `401 Unauthorized` response.
 
@@ -195,22 +195,25 @@ Then add the following code to the `authentication.controller.ts` file.
 import { Controller, Post, UseGuards, Request, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiCreatedResponse,
+  ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { SignInRequestDto } from './dtos';
+import { SignInRequestDto } from './dtos/signin-request.dto';
 
 @ApiTags('authentication')
 @Controller('authentication')
 export class AuthenticationController {
-  @ApiCreatedResponse({ description: 'Authentication succeeded.' })
+  @ApiOkResponse({ description: 'Authentication succeeded.' })
   @ApiUnauthorizedResponse({ description: 'Authentication failed.' })
   @UseGuards(AuthGuard('local'))
   @Post('signin')
-  public async signin(@Body() dto: SignInRequestDto, @Request() req): Promise<void> {
-    // On successfull authentication Passport makes the authenticated user (AuthenticatedUser) 
-    // available as a property on the request. We can obtain this using the @Request() decorator. 
+  public async signin(
+    @Body() dto: SignInRequestDto,
+    @Request() req
+  ): Promise<void> {
+    // On successfull authentication Passport makes the authenticated user (AuthenticatedUser)
+    // available as a property on the request. We can obtain this using the @Request() decorator.
     console.log(req.user);
   }
 }
@@ -234,7 +237,7 @@ NestJS provides the `@nestjs/jwt` package that contains utilities based on the [
 yarn add @nestjs/jwt
 ```
 
-We need to register and configure the `JwtModule`, but before we do this, let's transform the `AuthenticationModule` into a dynamic module. With static module binding (`@Module()` decorator) you cannot configure how the module is configured. Suppose we want to pass some configuration when importing a module to customize its behavior. That's where dynamic modules come into play. It's very simple, instead of passing the module's metadata via the `@Module()` decorator we provide a static method on the module that returns a `DynamicModule` instance. The properties of this instance are identical to the metadata passed to the `@Module()` decorator, but now we can pass an options object to the static function to tweak the module's behavior. Let's take a look at our refactored `AuthenticationModule`.
+We need to register and configure the `JwtModule`, but before we do this, let's transform the `AuthenticationModule` into a dynamic module. With static module binding (`@Module()` decorator) you cannot customize the module's behavior. Suppose we want to pass some configuration when importing a module to customize it. That's where dynamic modules come into play. It's very simple, instead of passing the module's metadata via the `@Module()` decorator we provide a static method on the module that returns a `DynamicModule` instance. The properties of this instance are identical to the metadata passed to the `@Module()` decorator, but now we can pass an options object to the static function to tweak the module's behavior. Let's take a look at our refactored `AuthenticationModule`.
 
 ```ts
 import { DynamicModule, Module } from '@nestjs/common';
@@ -269,7 +272,7 @@ export class AuthenticationModule {
 }
 ```
 
-We removed the metadata from the `@Module()` decorator and added a static `register()` function to the `AuthenticationModule`. The `register()` function takes a `AuthenticationModuleOptions` instance which contains properties such as `jwtSecret`, `expiresIn`...etc. We can use the passed in options to configure the `DynamicModule` returned by the `register()` method. Here's you see that we use the options to configure the `JwtModule` module that we import here. Notice that the `JwtModule` is also a dynamic module that offers a static `register()` function where we can pass in the options to configure it.
+We removed the metadata from the `@Module()` decorator and added a static `register()` function to the `AuthenticationModule`. This function takes an `AuthenticationModuleOptions` instance which contains properties such as `jwtSecret`, `expiresIn`...etc. We can use the passed in options to configure the `DynamicModule` returned by the `register()` method. Here you see that we use the options to configure the `JwtModule` module that we import. Notice that the `JwtModule` is also a dynamic module that offers a static `register()` function where we can pass in the options to configure it.
 
 ```ts
 export declare class JwtModule {
@@ -339,6 +342,11 @@ export class SignInResponseDto {
 Now inject the `AuthenticationService` into the `AuthenticationController` and call its `signin()` method once the local Passport strategy validated the user's credentials and provided us with an `AuthenticatedUser` instance.
 
 ```ts
+...
+import { AuthenticationService } from './authentication.service';
+import { SignInRequestDto } from './dtos/signin-request.dto';
+import { SignInResponseDto } from './dtos/signin-response.dto';
+
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
@@ -347,7 +355,10 @@ export class AuthenticationController {
   @ApiUnauthorizedResponse({ description: 'Authentication failed.' })
   @UseGuards(AuthGuard('local'))
   @Post('signin')
-  public async signin(@Body() dto: SignInRequestDto, @Request() req): Promise<SignInResponseDto> {
+  public async signin(
+    @Body() dto: SignInRequestDto,
+    @Request() req
+  ): Promise<SignInResponseDto> {
     return {
       accessToken: this.authenticationService.signin(req.user),
     };
@@ -371,10 +382,10 @@ You can navigate to `http://jwt.io` and paste the JWT token there to view its co
 
 Now everything is in place to protect the car insurance quote endpoints.
 
-* `POST /api/quote/calculate`: endpoint to calculate a car insurance quote
-* `GET /api/quote/:id`: endpoint to retrieve a car insurance quote
+- `POST /api/quote/calculate`: endpoint to calculate a car insurance quote
+- `GET /api/quote/:id`: endpoint to retrieve a car insurance quote
 
-When these two endpoints are called users must first sign in and then provide the obtained JWT token as a bearer token in the authorization header in the requests. But to validate the incoming tokens we must implement another strategy. This time the Passport strategy will not validate a username and password, but rather a JWT token. Luckily Passport also provides a strategy for this, namely the [passport-jwt](https://www.passportjs.org/packages/passport-jwt/) strategy.
+When these two endpoints are called users must first sign in and then provide the obtained JWT token as a bearer token in the authorization header. But to validate the incoming tokens we must implement another strategy. This time the Passport strategy will not validate a username and password, but rather a JWT token. Luckily Passport also provides a strategy for this, namely the [passport-jwt](https://www.passportjs.org/packages/passport-jwt/) strategy.
 
 Install the package and its type declarations.
 
@@ -383,10 +394,9 @@ yarn add passport-jwt
 yarn add @types/passport-jwt -D
 ```
 
-Add a file called `jwt.strategy.ts` to the authentication module. Like the local strategy, the `JwtStrategy` extends from `PassportStrategy` and specifies the strategy is uses. This time we do pass some custom configuration to the Passport strategy. We must tell it the secret that was used to sign the tokens so that it can validate the incoming tokens. We also tell the Passport strategy where it can find the JWT token in the request. In our case, it will be extracted from the authorization header. The configuration is injected via the constructor and the Passport configuration is passed the `super()` invocation.
+Add a file called `jwt.strategy.ts` to the authentication module. Like the local strategy, the `JwtStrategy` extends from `PassportStrategy` and specifies the strategy it uses. This time we do pass some custom configuration to the Passport strategy. We must tell it the secret that was used to sign the tokens so that it can validate the incoming tokens. We also tell the Passport strategy where it can find the JWT token in the request. In our case, it will be extracted from the authorization header. The configuration is injected via the constructor and the Passport configuration to the `super()` invocation.
 
 When the token is validated, the `validate()` method is called and the payload of the token is passed to it. We take this data and convert it back into an `AuthenticatedUser` instance. Voila, we have now authenticated our user via a JWT token.
-
 
 ```ts
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -425,6 +435,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 Now we need to register the new strategy as a provider in the authentication module.
 
 ```ts
+...
+import { JwtStrategy, JwtStrategyConfiguration } from './jwt.strategy';
+
 @Module({})
 export class AuthenticationModule {
   public static register(options: AuthenticationModuleOptions): DynamicModule {
@@ -496,7 +509,7 @@ const config = new DocumentBuilder()
   .build();
 ```
 
-Then go back to the `QuoteController` and apply the `@@ApiBearerAuth()` decorator to it. This way the Swagger UI knows that it must include the bearer token for the route handlers in this controller.
+Then go back to the `QuoteController` and apply the `@ApiBearerAuth()` decorator to it. This way the Swagger UI knows that it must include the bearer token for the route handlers in this controller.
 
 ```ts
 import { ApiBearerAuth,...} from '@nestjs/swagger';
@@ -510,3 +523,5 @@ If you refresh the Swagger UI you'll notice a new `Authorize` button in the top 
 ![JWT Token](./assets/images/swagger-ui-authorize.png)
 
 If you click on this button you can fill in the JWT token that will be sent along with every request made via the Swagger UI. First, obtain a token by signing in a user and then copy/paste the obtain token. Afterward, you can call the secured car insurance quote endpoints again.
+
+![JWT Token](./assets/images/swagger-ui-jwt-token.png)

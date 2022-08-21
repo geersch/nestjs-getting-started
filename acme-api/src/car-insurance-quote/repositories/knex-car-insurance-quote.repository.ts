@@ -30,7 +30,7 @@ export class KnexCarInsuranceQuoteRepository
     );
 
     return {
-      id: result[0],
+      id: result[0].id,
       ageOfDriver,
       monthlyPremium,
       yearlyPremium,

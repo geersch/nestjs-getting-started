@@ -7,9 +7,7 @@ export class ContentTypeMiddlewareConfiguration {
 
 @Injectable()
 export class RequireContentTypeMiddleware implements NestMiddleware {
-  constructor(private readonly config: ContentTypeMiddlewareConfiguration) {
-    console.log(config);
-  }
+  constructor(private readonly config: ContentTypeMiddlewareConfiguration) {}
 
   public use(req: Request, res: Response, next: NextFunction): void {
     const contentType = req.headers['content-type'];

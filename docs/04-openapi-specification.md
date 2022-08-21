@@ -2,7 +2,7 @@
 
 ## Setting up Swagger
 
-Up until now, we've used `cURL` requests to send requests to our back-end API. It's a little bit cumbersome to compose the requests in this fashion. Let's make life a bit easier.
+Up until now, we've used `cURL` to send requests to our back-end API. It's a little bit cumbersome to compose the requests this way. Let's make life a bit easier.
 
 The [OpenAPI Specification (OAS)](https://swagger.io/specification) is a standard, language-agnostic interface to RESTful APIs which allows both humans and computers to discover and understand the capabilities of the service without access to the source code, documentation, or through network inspection. When properly defined, a consumer can understand and interact with the remote service with a minimal amount of implementation logic.
 
@@ -46,7 +46,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-Start the application, open a browser and navigate to `http://localhost:3000/api`. You'll now see the Swagger UI.
+Start the application, open a browser and navigate to `http://localhost:3000/api`.
 
 ![Swagger UI](./assets/images/swagger-ui.png)
 
@@ -73,13 +73,21 @@ In order to get the JSON version just navigate to `http://localhost:3000/api-jso
 }
 ```
 
-We can now execute requests to our back-end API via the Swagger UI. Let's try it out.
+We can now execute requests to our back-end API via the Swagger UI. Let's try it out. Expand the `POST /api/quote/calculate` node and paste the following JSON into the request body and click `Execute`.
+
+```json
+{
+  "ageOfDriver": 18,
+  "carId": 1,
+  "purchasePrice": 35000
+}
+```
 
 ![Swagger UI - Try It Out](./assets/images/swagger-ui-try-it-out.png)
 
 ## Decorating Controller Methods
 
-The `SwaggerModule` from the `@nestjs/swagger` package searches for all `@Body()`, `@Query()`...etc. decorators in route handlers to generate the API document. It also creates model definitions by taking advantage of reflection. 
+The `SwaggerModule` from the `@nestjs/swagger` package searches for all `@Body()`, `@Query()`...etc. decorators in route handlers to generate the API document. It also creates model definitions by taking advantage of reflection.
 
 In OpenAPI parlance, paths are endpoints (resources), such as `/customers` or `/products`, that your API exposes and operations are the HTTP verbs (`GET`, `POST`, `PUT`...) used to manipulate these resources.
 
@@ -118,18 +126,18 @@ export class QuoteController {
 
 Using decorators such as `@ApiCreatedResponse()` and `@ApiOkResponse()` we can provide extra metadata for the OpenAPI document generation. The `@nestjs/swagger` package provides many more decorators to help you tweak the document generation.
 
-* `@ApiOkResponse()`
-* `@ApiCreatedResponse()`
-* `@ApiAcceptedResponse()`
-* `@ApiNoContentResponse()`
-* `@ApiMovedPermanentlyResponse()`
-* `@ApiBadRequestResponse()`
-* `@ApiUnauthorizedResponse()`
-* ...and many more.
+- `@ApiOkResponse()`
+- `@ApiCreatedResponse()`
+- `@ApiAcceptedResponse()`
+- `@ApiNoContentResponse()`
+- `@ApiMovedPermanentlyResponse()`
+- `@ApiBadRequestResponse()`
+- `@ApiUnauthorizedResponse()`
+- ...and many more.
 
 ## Decorating DTO Properties
 
-Not only can we decorate the route handlers, but we can also decorator the DTOs used to bind to the request payload or to contain the responses the API sends back. 
+Not only can we decorate the route handlers, but we can also decorate the DTOs that contain the request payloads or the responses the API sends back.
 
 Let's decorate the DTO used to contain the payload for calculating a car insurance quote.
 
@@ -178,7 +186,7 @@ export class CarInsuranceQuoteResponseDto {
     example: 1,
   })
   id: number;
-  
+
   @ApiProperty({
     type: Number,
     description: 'The monthly price of the car insurance premium.',

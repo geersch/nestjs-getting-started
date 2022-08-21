@@ -10,12 +10,12 @@ NestJS provides a level of abstraction above these common `Node.js` frameworks b
 
 It is written in TypeScript and its structure, especially the modules and dependency injection system, is familiar to Angular.
 
-* https://nestjs.com/
-* https://github.com/nestjs
+- https://nestjs.com/
+- https://github.com/nestjs
 
 ## Prerequisites
 
-[Node.js](https://nodejs.org/en/) and [NPM](https://nodejs.org/en/) are required to work with NestJS and the NestJS CLI.
+[Node.js](https://nodejs.org/en/) and [NPM](https://www.npmjs.com/) are required to work with NestJS and the NestJS CLI.
 
 **Tip**: Use [NVM](https://github.com/nvm-sh/nvm) (Node Version Manager) to manage multiple `Node.js` installations. Use `cURL`or `Wget` to install `NVM`.
 
@@ -25,7 +25,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
 ```sh
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-````
+```
 
 To verify that `NVM` has been installed, execute:
 
@@ -33,18 +33,18 @@ To verify that `NVM` has been installed, execute:
 nvm -v
 ```
 
-Let's use `Node.js` 14 LTS. Its codename is `Fermium`.
+Let's use `Node.js` 16 LTS. Its codename is `Gallium`.
 
 https://nodejs.org/en/about/releases/
 
 ```sh
-nvm install lts/fermium
+nvm install lts/gallium
 ```
 
 Or use the `use` command if you already have it installed.
 
 ```sh
-nvm use lts/fermium
+nvm use lts/gallium
 ```
 
 Verify the `Node.js` installation.
@@ -96,9 +96,9 @@ We will be creating an API to calculate car insurance quotes for a fictional com
 
 To calculate a car insurance quote we require 3 input parameters.
 
-* age of the driver
-* brand of the car (BMW, Skoda, Mini, Tesla, Porsche...)
-* purchase price of the car
+- age of the driver
+- brand of the car (BMW, Skoda, Mini, Tesla, Porsche...)
+- purchase price of the car
 
 Some business rules apply:
 
@@ -108,11 +108,11 @@ Some business rules apply:
 
 Let's keep the rest simple and assume that the premium of the car insurance is fixed per car brand. We should return a response that includes the yearly and monthly premium. To calculate the monthly premium just divide the yearly price by 12 and round it.
 
-* `BMW`: 150 € / year
-* `Skoda`: 100  €  / year
-* `Mini`: 150  € / year
-* `Tesla`: 250  € / year
-* `Porsche`: 500  € / year
-( ...etc.)
+- `BMW`: 150 € / year
+- `Skoda`: 100 € / year
+- `Mini`: 150 € / year
+- `Tesla`: 250 € / year
+- `Porsche`: 500 € / year
+- ...
 
 Only authenticated users should be able to calculate and retrieve car insurance quotes.
