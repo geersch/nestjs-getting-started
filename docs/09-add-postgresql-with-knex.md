@@ -4,9 +4,9 @@
 
 Download the installation package for your OS.
 
-* [Docker Desktop for Mac (Apple Chip)](https://desktop.docker.com/mac/stable/arm64/Docker.dmg)
-* [Docker Desktop for Mac (Intel Chip)](https://desktop.docker.com/mac/stable/amd64/Docker.dmg)
-* [Docker Desktop for Windows](https://desktop.docker.com/win/stable/amd64/Docker)
+- [Docker Desktop for Mac (Apple Chip)](https://desktop.docker.com/mac/stable/arm64/Docker.dmg)
+- [Docker Desktop for Mac (Intel Chip)](https://desktop.docker.com/mac/stable/amd64/Docker.dmg)
+- [Docker Desktop for Windows](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe)
 
 Docker Desktop includes Docker Compose, so we do not need to install Compose separately. If you installed Docker in another way and don't have Compose yet, please consult the [Install Docker Compose](https://docs.docker.com/compose/install) documentation.
 
@@ -22,7 +22,7 @@ version: '3.5'
 services:
   postgres:
     container_name: postgres
-    image: postgres:13.4-alpine
+    image: postgres:14.5-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -39,10 +39,11 @@ volumes:
   postgres:
 ```
 
-This Compose configuration file points to two environment variables:
+Take note of the following three environment variables in the Compose configuration file:
 
-* `POSTGRES_USER`: superuser username for PostgreSQL
-* `POSTGRES_PASSWORD`: superuser password for PostgreSQL
+- `POSTGRES_USER`: superuser username for PostgreSQL
+- `POSTGRES_PASSWORD`: superuser password for PostgreSQL
+- `POSTGRES_DB`: name of the Postgres database (hardcoded to `acme`)
 
 Be sure to configure these environment variables locally before starting the container. (**Tip**: I use [direnv](https://direnv.net/) to load and unload environment variables depending on the current directory.)
 
@@ -85,40 +86,42 @@ To work with `Knex.js` and `PostgreSQL` we need to install a few packages.
 
 ```ts
  yarn add pg knex nestjs-knex
- ```
+```
 
- **Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application, you might want to write your own NestJS package to integrate Knex. This package is not frequently updated, making it troublesome to update `Knex.js`.
+**Remark**: The [nestjs-knex](https://github.com/svtslv/nestjs-knex) package is not an official NestJS package, but it suffices to integrate Knex with our NestJS application for this course. In a real-world application, you might want to write your own NestJS package to integrate Knex. This package is not frequently updated, making it troublesome to update `Knex.js`.
 
- After installing the `nestjs-knex` package we need to import it into our application's root module. Open the `app.module.file` and modify it as listed below.
+After installing the `nestjs-knex` package we need to import it into our application's root module. Open the `app.module.file` and modify it as listed below.
 
- ```ts
+```ts
 import { Module } from '@nestjs/common';
 ...
 import { KnexModule } from 'nestjs-knex';
 
 @Module({
-  imports: [
-    ...
-    KnexModule.forRootAsync({
-      useFactory: () => ({
-        config: {
-          client: 'pg',
-          connection: {
-            host: process.env.POSTGRES_HOST,
-            user: process.env.POSTGRES_USER,
-            password: process.env.POSTGRES_PASSWORD,
-            database: 'acme',
-          },
-        },
-      }),
-    }),
-  ],
-  providers: [...]
+ imports: [
+   ...
+   KnexModule.forRootAsync({
+     useFactory: () => ({
+       config: {
+         client: 'pg',
+         connection: {
+           host: process.env.POSTGRES_HOST,
+           user: process.env.POSTGRES_USER,
+           password: process.env.POSTGRES_PASSWORD,
+           database: 'acme',
+         },
+       },
+     }),
+   }),
+ ],
+ providers: [...]
 })
 export class AppModule {}
 ```
 
- We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `POSTGRES_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup, this is `localhost`.
+We reuse the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables we declared earlier and add a new one named `POSTGRES_HOST`. Add this new environment variable and point it to the host where the PostgreSQL database is running. In our current setup, this is `localhost`.
+
+**Remark**: The `KnexModule` imports the [`KnexCoreModule`](https://github.com/svtslv/nestjs-knex/blob/master/src/knex.core-module.ts) module which is a [global module](https://docs.nestjs.com/modules#global-modules). Providers exported by global modules are registered in the global scope. Once loaded, they're available everywhere. We can inject these providers in any of our application's modules.
 
 ## Persisting the Car Insurance Quotes
 
@@ -137,21 +140,24 @@ export abstract class CarInsuranceQuoteRepository {
   public abstract save(
     ageOfDriver: number,
     monthlyPremium: number,
-    yearlyPremium: number,
+    yearlyPremium: number
   ): Promise<CarInsuranceQuote>;
 
   public abstract load(id: number): Promise<CarInsuranceQuote>;
 }
 ```
 
-We declare a simple repository contract using an abstract class. A cool feature of TypeScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript can extract the interface from the abstract class. The repository allows us to save and load car insurance quotes. 
+We declare a simple repository contract using an abstract class. A cool feature of TypeScript is that you can also implement abstract classes, you are not limited to only implementing interfaces. TypeScript can extract the interface from the abstract class. The repository allows us to save and load car insurance quotes.
 
 Let's implement a Knex specific implementation of this abstract class. Add a file called `knex-car-insurance-quote.repository.ts` to the folder containing the abstract class. It contains the following code:
 
 ```ts
 import { Injectable } from '@nestjs/common';
 import { InjectKnex, Knex } from 'nestjs-knex';
-import { CarInsuranceQuote, CarInsuranceQuoteRepository } from './car-insurance-quote.repository';
+import {
+  CarInsuranceQuote,
+  CarInsuranceQuoteRepository,
+} from './car-insurance-quote.repository';
 
 @Injectable()
 export class KnexCarInsuranceQuoteRepository
@@ -164,7 +170,7 @@ export class KnexCarInsuranceQuoteRepository
   public async save(
     ageOfDriver: number,
     monthlyPremium: number,
-    yearlyPremium: number,
+    yearlyPremium: number
   ): Promise<CarInsuranceQuote> {
     const createdOn: Date = new Date();
     const result = await this.knex.table(this.table).insert(
@@ -174,11 +180,11 @@ export class KnexCarInsuranceQuoteRepository
         yearlypremium: yearlyPremium,
         createdon: createdOn,
       },
-      'id',
+      'id'
     );
 
     return {
-      id: result[0],
+      id: result[0].id,
       ageOfDriver,
       monthlyPremium,
       yearlyPremium,
@@ -195,7 +201,7 @@ export class KnexCarInsuranceQuoteRepository
         'ageofdriver as ageOfDriver',
         'monthlypremium as monthlyPremium',
         'yearlypremium as yearlyPremium',
-        'createdon as createdOn',
+        'createdon as createdOn'
       )
       .first<CarInsuranceQuote>();
 
@@ -213,11 +219,15 @@ export class KnexCarInsuranceQuoteRepository
 }
 ```
 
-Via the `@InjectKnex()` decorator provided by the `nestjs-knex` package we inject a `Knex` instance that allows us to work with the database via `Knex.js`. The implementation for the `save()` and `load()` methods use this instance to persist and retrieve the car insurance quotes.
+Via the `@InjectKnex()` decorator provided by the `nestjs-knex` package we inject a `Knex` instance that allows us to work with the database via `Knex.js`. The `Knex` provider is part of the global Knex module we imported earlier in our application's root module. The implementation for the `save()` and `load()` methods use this instance to persist and retrieve the car insurance quotes.
 
 Now that we provided an implementation for the abstract `CarInsuranceQuoteRepository` class we need to register it in NestJS's dependency injection system. We are going to register it in the car insurance quote module, so open the `car-insurance-quote.module.ts` file. We need to add a provider that instructs NestJS to supply an instance of the `KnexCarInsuranceQuoteRepository` class whenever a `CarInsuranceQuoteRepository` is injected.
 
 ```ts
+...
+import { CarInsuranceQuoteRepository } from './repositories/car-insurance-quote.repository';
+import { KnexCarInsuranceQuoteRepository } from './repositories/knex-car-insurance-quote.repository';
+
 @Module({
   controllers: [QuoteController],
   providers: [
@@ -271,7 +281,7 @@ export class QuoteService {
 }
 ```
 
-And finally, update the `calculatePremium()` method to persist the quotes. You can remove the private `premiums` variable as we no longer store the premiums in-memory. 
+And finally, update the `calculatePremium()` method to persist the quotes. You can remove the private `premiums` variable as we no longer store the premiums in-memory.
 
 ```ts
 @Injectable()

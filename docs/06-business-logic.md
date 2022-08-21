@@ -6,9 +6,9 @@ Before we can continue with demonstrating other NestJS building blocks we must i
 
 To calculate a car insurance quote we require 3 input parameters.
 
-* age of the driver
-* brand of the car (BMW, Skoda, Mini, Tesla, Porsche...)
-* purchase price of the car
+- age of the driver
+- brand of the car (BMW, Skoda, Mini, Tesla, Porsche...)
+- purchase price of the car
 
 Some business rules apply.
 
@@ -18,12 +18,12 @@ Some business rules apply.
 
 Let's keep the rest simple and let's assume that the price of the car insurance is a fixed price per car brand. We should return a response that includes the yearly and monthly (yearly / 12) premiums.
 
-* `BMW`: 150 € / year
-* `Skoda`: 100  €  / year
-* `Mini`: 150  € / year
-* `Tesla`: 250  € / year
-* `Porsche`: 500  € / year
-( ...etc.)
+- `BMW`: 150 € / year
+- `Skoda`: 100 € / year
+- `Mini`: 150 € / year
+- `Tesla`: 250 € / year
+- `Porsche`: 500 € / year
+- ...
 
 ## Quote Service
 
@@ -62,7 +62,7 @@ Configure the `CarBrandRepository` as a provider in the car insurance quote modu
 import { Module } from '@nestjs/common';
 import { QuoteController } from './quote.controller';
 import { QuoteService } from './quote.service';
-import { CarBrandRepository } from './repositories';
+import { CarBrandRepository } from './repositories/car-brand.repository';
 
 @Module({
   controllers: [QuoteController],
@@ -79,7 +79,7 @@ A base class from which all errors that encapsulate business rule violations ext
 
 ```ts
 export class BusinessRuleViolation extends Error {}
-````
+```
 
 `driver-too-young.error.ts`
 
@@ -123,21 +123,22 @@ export class UnknownCarBrandError extends BusinessRuleViolation {}
 
 Now let's implement our quote service. The code is straightforward. We inject the `CarBrandRepository` via the constructor and add a method called `calculatePremium()`. This method receives three parameters:
 
-* age of the driver
-* ID of the car brand
-* purchase price of the car
+- age of the driver
+- ID of the car brand
+- purchase price of the car
 
 The method verifies the business rules and throws one of the errors we created earlier if one of them is violated. If the validation succeeds, then a premium is calculated and stored in memory. Calculated premiums can later be retrieved via the `findById()` method.
 
 ```ts
 import { Injectable } from '@nestjs/common';
+import { DriveTooYoungError } from './errors/driver-too-young.error';
+import { PurchasePriceTooLowError } from './errors/purchase-price-too-low.error';
+import { RiskTooHighError } from './errors/risk-too-high.error';
+import { UnknownCarBrandError } from './errors/unknown-car-brand.error';
 import {
-  DriveTooYoungError,
-  PurchasePriceTooLowError,
-  RiskTooHighError,
-  UnknownCarBrandError,
-} from './errors';
-import { CarBrand, CarBrandRepository } from './repositories';
+  CarBrand,
+  CarBrandRepository,
+} from './repositories/car-brand.repository';
 
 export interface Premium {
   id: number;
@@ -157,7 +158,7 @@ export class QuoteService {
   public async calculatePremium(
     ageOfDriver: number,
     carId: number,
-    purchasePrice: number,
+    purchasePrice: number
   ): Promise<Premium> {
     if (ageOfDriver < MINIMUM_AGE) {
       throw new DriveTooYoungError();
@@ -198,6 +199,10 @@ export class QuoteService {
 The last thing we need to do is to inject the quote service in the controller and update the route handlers.
 
 ```ts
+...
+import { ..., NotFoundException } from '@nestjs/common';
+import { QuoteService } from './quote.service';
+
 @ApiTags('car insurance quotes')
 @Controller('quote')
 @UseGuards(AuthGuard('jwt'))
@@ -210,12 +215,12 @@ export class QuoteController {
   })
   @Post('calculate')
   public async post(
-    @Body() quote: CalculateQuoteRequestDto,
+    @Body() quote: CalculateQuoteRequestDto
   ): Promise<CarInsuranceQuoteResponseDto> {
     const premium = await this.quoteService.calculatePremium(
       quote.ageOfDriver,
       quote.carId,
-      quote.purchasePrice,
+      quote.purchasePrice
     );
 
     return premium;
@@ -227,7 +232,7 @@ export class QuoteController {
   })
   @Get(':id')
   public async getById(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) id: number
   ): Promise<CarInsuranceQuoteResponseDto> {
     const premium = await this.quoteService.getById(id);
     if (!premium) {
@@ -238,7 +243,7 @@ export class QuoteController {
 }
 ```
 
-Voila, now we can calculate a car insurance quote premium and retrieve it later. Both route handlers now return a `CarInsuranceQuoteResponseDto` instance. In this case, we can return the `Premium` instance returned by the quote service because the shape of this object matches with the `CarInsuranceQuoteResponseDto` response DTO. In other cases, you might need to map the result of the service to the response DTO. 
+Voila, now we can calculate a car insurance quote premium and retrieve it later. Both route handlers now return a `CarInsuranceQuoteResponseDto` instance. In this case, we can return the `Premium` instance returned by the quote service because the shape of this object matches with the `CarInsuranceQuoteResponseDto` response DTO. In other cases, you might need to map the result of the service to the response DTO.
 
 Testing our route handlers, we notice a few things:
 

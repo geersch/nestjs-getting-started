@@ -14,7 +14,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 // retrieve a car insurance quote
-const quote = await prisma.carInsuranceQuote.findUnique({ where: { id: 1 }});
+const quote = await prisma.carInsuranceQuote.findUnique({ where: { id: 1 } });
 
 // create a car insurance quote
 const newQuote = await prisma.carInsuranceQuote.create({
@@ -22,8 +22,8 @@ const newQuote = await prisma.carInsuranceQuote.create({
     ageOfDriver: 18,
     monthlyPremium: 10,
     yearlyPremium: 120,
-    createdOn: new Date()
-  }
+    createdOn: new Date(),
+  },
 });
 ```
 
@@ -49,16 +49,16 @@ Using the CLI create a Prisma schema file.
 npx prisma init
 ```
 
-This will create a `prisma` folder in the root of the repository containing a `schema.prisma` file. Initially the schema file only contains a [datasource](https://www.prisma.io/docs/concepts/components/prisma-schema/data-sources) and [generator](https://www.prisma.io/docs/concepts/components/prisma-schema/generators).
+This will create a `prisma` folder in the root of the repository containing a `schema.prisma` file. Initially the schema file only contains a [generator](https://www.prisma.io/docs/concepts/components/prisma-schema/generators) and [datasource](https://www.prisma.io/docs/concepts/components/prisma-schema/data-sources).
 
 ```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 ```
 
@@ -74,9 +74,9 @@ For example:
 export DATABASE_URL=postgresql://postgres:abc123@localhost:5432/acme
 ```
 
-This new environment variable contains all the information declared in the `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST` and `DB_NAME` environment variables created earlier. 
+This new environment variable contains all the information declared in the `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_HOST` and `DB_NAME` environment variables created earlier.
 
-As explained in a previous chapter I use [direnv](https://direnv.net/) to define my environment variables, but you can also use the [.env](ttps://www.prisma.io/docs/guides/development-environment/environment-variables) file created by Prisma by default at the root of your project. If you don't use the `.env` file created by the Prisma CLI you can delete it. Whichever method you prefer, make sure to declare the `DATABASE_URL` environment variable before continuing. 
+As explained in a previous chapter I use [direnv](https://direnv.net/) to define my environment variables, but you can also use the [`.env`](https://www.prisma.io/docs/guides/development-environment/environment-variables) file created by the Prisma CLI at the root of your project. If you don't use the `.env` file you can delete it. Whichever method you prefer, make sure to declare the `DATABASE_URL` environment variable before continuing.
 
 We can write the data model (Prisma model) manually and use [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate) to generate `.sql` migration scripts to keep our database in sync with the Prisma schema.
 However, we are working with an existing database that was created using the `init.sql` script. We prefer to migrate the database schema ourselves instead of using Prisma Migrate. In that case, we can generate the Prisma models via introspection. In the former case the Prisma schema is the single source of truth and in the latter it's the database schema.
@@ -137,7 +137,7 @@ This generates the Prisma Client into the `./node_modules/.prisma/client` direct
 ```sh
 Prisma schema loaded from prisma/schema.prisma
 
-✔ Generated Prisma Client (2.29.1) to ./node_modules/@prisma/client in 547ms
+✔ Generated Prisma Client (4.2.1 | library) to ./node_modules/@prisma/client in 69ms
 You can now start using Prisma Client in your code. Reference: https://pris.ly/d/client
 
 import { PrismaClient } from '@prisma/client'
@@ -151,7 +151,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const quote = await prisma.carInsuranceQuote.findUnique({ where: { id: 1 }});
+const quote = await prisma.carInsuranceQuote.findUnique({ where: { id: 1 } });
 ```
 
 Let's integrate it with our NestJS application. To start, create a new module called `prisma`.
@@ -181,28 +181,33 @@ import { PrismaService } from './prisma.service';
 export class PrismaModule {}
 ```
 
-The `PrismaService` will serve as an abstraction of the Prisma Client. Through NestJS's dependency injection system, we can inject it into other providers. 
-Extend the service from the generated `PrismaClient` and implement NestJS's `OnModuleInit` and `OnModuleDestroy` interfaces. In the `onModuleInit()` function we connect to the underlying database via the `PrismaClient`'s `$connect()` method and we disconnect from it using `$disconnect()` in the `onModuleDestroy()` method. 
+The `PrismaService` will serve as an abstraction of the Prisma Client. Through NestJS's dependency injection system, we can inject it into other providers.
+Extend the service from the generated `PrismaClient` and implement NestJS's `OnModuleInit` interface. In the `onModuleInit()` function we connect to the underlying database via the `PrismaClient`'s `$connect()` method.
+
+**Remark**: We don't implement the NestJS `OnModuleDestroy` interface to disconnect from the database. Prisma has its own shutdown hooks where it will destroy the connection. However, Prisma interferes with NestJS `enableShutdownHooks`. Prisma listens for shutdown signals and will call `process.exit()` before your application shutdown hooks fire. To deal with this, add a listener for Prisma's `beforeExit` event.
+
+You can read more information here:
+
+https://docs.nestjs.com/recipes/prisma#issues-with-enableshutdownhooks
 
 ```ts
-import { OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { INestApplication, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 
-export class PrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     await this.$connect();
   }
 
-  async onModuleDestroy() {
-    await this.$disconnect();
+  async enableShutdownHooks(app: INestApplication) {
+    this.$on('beforeExit', async () => {
+      await app.close();
+    });
   }
 }
 ```
 
-NestJS will call `onModuleInit()` once when the `PrismaModule` is loaded on application startup and `onModuleDestroy()` once when the application receives a termination signal. The `PrismaClient`, and its underlying database connection, can be shared by injecting the `PrismaService` into other providers.
+NestJS will call `onModuleInit()` once when the `PrismaModule` is loaded on application startup and connect to the database. The `PrismaClient`, and its underlying database connection, can be shared by injecting the `PrismaService` into other providers.
 
 ## Persisting the Car Insurance Quotes
 
@@ -221,7 +226,7 @@ export abstract class CarInsuranceQuoteRepository {
   public abstract save(
     ageOfDriver: number,
     monthlyPremium: number,
-    yearlyPremium: number,
+    yearlyPremium: number
   ): Promise<CarInsuranceQuote>;
 
   public abstract load(id: number): Promise<CarInsuranceQuote>;
@@ -232,8 +237,11 @@ We implemented a Knex specific implementation of this abstract class to be able 
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { CarInsuranceQuote, CarInsuranceQuoteRepository } from './car-insurance-quote.repository';
-import { PrismaService } from '../../prisma';
+import {
+  CarInsuranceQuote,
+  CarInsuranceQuoteRepository,
+} from './car-insurance-quote.repository';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class PrismaCarInsuranceQuoteRepository
@@ -244,7 +252,7 @@ export class PrismaCarInsuranceQuoteRepository
   public async save(
     ageOfDriver: number,
     monthlyPremium: number,
-    yearlyPremium: number,
+    yearlyPremium: number
   ): Promise<CarInsuranceQuote> {
     const createdOn: Date = new Date();
     const quote = await this.prismaService.carInsuranceQuote.create({
@@ -283,11 +291,14 @@ export class PrismaCarInsuranceQuoteRepository
 }
 ```
 
-The `PrismaCarInsuranceQuoteRepository` class extends the `PrismaService` class which in turn extends from `PrismaClient`. This way, we can use the Prisma Client to send queries to the database. This client is used to implement the `save()` and `load()` methods.
+The `PrismaService` provider is injected into the `PrismaCarInsuranceQuoteRepository` class. We can use it to send queries to the database.
 
 We need to register this new class in NestJS's dependency injection system. We'll add it to the car insurance quote module, so open the `car-insurance-quote.module.ts` file.
 
 ```ts
+...
+import { PrismaCarInsuranceQuoteRepository } from './repositories/prisma-car-insurance-quote.repository';
+
 @Module({
   controllers: [QuoteController],
   imports: [PrismaModule],
@@ -295,9 +306,9 @@ We need to register this new class in NestJS's dependency injection system. We'l
     CarBrandRepository,
     QuoteService,
     /*
-    { 
-      provide: CarInsuranceQuoteRepository, 
-      useClass: KnexCarInsuranceQuoteRepository 
+    {
+      provide: CarInsuranceQuoteRepository,
+      useClass: KnexCarInsuranceQuoteRepository
     },
     */
     {
@@ -309,7 +320,8 @@ We need to register this new class in NestJS's dependency injection system. We'l
 export class CarInsuranceQuoteModule {}
 ```
 
-Comment out the `KnexCarInsuranceQuoteRepository` provider that provides the `Knex.js` specific implementation. If you want to switch back, uncomment it and remove the `PrismaCarInsuranceQuoteRepository` provider. NestJS will supply an instance of the `PrismaCarInsuranceQuoteRepository` class whenever we inject the `CarInsuranceQuoteRepository`.
+Comment out the `KnexCarInsuranceQuoteRepository` provider that provides the `Knex.js` specific implementation. If you want to switch back, uncomment it and remove the `PrismaCarInsuranceQuoteRepository` provider. NestJS will now supply an instance of the `PrismaCarInsuranceQuoteRepository` class whenever we inject the `CarInsuranceQuoteRepository`. You also need to import the `PrismaModule` so that you can inject the `PrismaService` provider!
+In the `AppModule` you can now also remove the `KnexModule.forRootAsync(...)` import.
 
 That's all there is to it. When you run the application, saving and loading quotes is handled by Prisma!
 
@@ -355,14 +367,14 @@ There are two ways to add the new table to the database. If you've already got t
 
 ```sh
 docker-compose down
-docker-volume rm acme-api_postgres
+docker volume rm acme-api_postgres
 docker-compose up -d
 ```
 
 Now we can introspect the database and generate the Prisma model.
 
 ```sh
-npx prisma db pull 
+npx prisma db pull
 ```
 
 Afterward, the `schema.prisma` file contains `car_brand` model.
@@ -392,7 +404,7 @@ model CarBrand {
 We must regenerate the Prisma Client after updating the schema.
 
 ```sh
-npx prisma generate    
+npx prisma generate
 ```
 
 Let's remove the in-memory implementation of the `CarBrandRepository` class and make it abstract. Replace the code in the `car-brand.repository.ts` file with the following code.
@@ -412,9 +424,19 @@ export abstract class CarBrandRepository {
 
 We don't persist car brands via the repository. We only need to retrieve one via its ID. Hence, we only require a `findById()` method.
 
-Now we can extend from this abstract class and provide a Prisma-specific implementation. In the same folder as the `car-brand.repository.ts` file add a new file called `prisma-car-brand.repository.ts` file. The implementation is straightforward, the  `PrismaService` is injected so that we can use our Prisma Client API to query the car brands from the database.
+Note that the `findbyId()` method now returns a promise. Update the call to it in the `QuoteService`, be sure to put an `await` in front of it.
 
 ```ts
+const brand: CarBrand = await this.carBrandRepository.findById(carId);
+```
+
+Now we can extend from this abstract class and provide a Prisma-specific implementation. In the same folder as the `car-brand.repository.ts` file add a new file called `prisma-car-brand.repository.ts` file. The implementation is straightforward, the `PrismaService` is injected so that we can use our Prisma Client API to query the car brands from the database.
+
+```ts
+import { Injectable } from '@nestjs/common';
+import { CarBrand, CarBrandRepository } from './car-brand.repository';
+import { PrismaService } from '../../prisma/prisma.service';
+
 @Injectable()
 export class PrismaCarBrandRepository implements CarBrandRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -443,11 +465,10 @@ Last, but not least, we must register this new provider in the `CarInsuranceQuot
   controllers: [QuoteController],
   imports: [PrismaModule],
   providers: [
-    CarBrandRepository,
     QuoteService,
-    { 
-      provide: CarBrandRepository, 
-      useClass: PrismaCarBrandRepository 
+    {
+      provide: CarBrandRepository,
+      useClass: PrismaCarBrandRepository,
     },
     {
       provide: CarInsuranceQuoteRepository,
@@ -458,13 +479,13 @@ Last, but not least, we must register this new provider in the `CarInsuranceQuot
 export class CarInsuranceQuoteModule {}
 ```
 
-Voila, now when the `QuoteService` asks the `CarBrandRepository` to retrieve a car brand, the Prisma-specific implementation of this abstract class (`PrismaCarBrandRepository`) will happily retrieve it for us. 
+Voila, now when the `QuoteService` asks the `CarBrandRepository` to retrieve a car brand, the Prisma-specific implementation of this abstract class (`PrismaCarBrandRepository`) will happily retrieve it for us.
 
 Restart the application and test it out. Oh, but wait, we don't have any data yet in the `car_brand` table. Let's fix that in the next section.
 
 ## Seeding the Database
 
-Using Prisma's integrated [seeding functionality](https://www.prisma.io/docs/guides/database/seed-database) you can seed your database. This functionality is currently in preview. Let's use it seed the car brands we previously stored in-memory.
+Using Prisma's integrated [seeding functionality](https://www.prisma.io/docs/guides/database/seed-database) you can seed your database. Let's use it seed the car brands we previously stored in-memory.
 
 Add a `seed.ts` file in the same location as your `schema.prisma` file. In the `seed.ts` file, import the Prisma Client, instantiate it, and create some car brands using the generated Prisma Client API.
 
@@ -514,11 +535,35 @@ main()
   });
 ```
 
-To seed the database, run the following command:
+Now open the `package.json` of your project and add the following to it:
+
+```json
+"prisma": {
+  "seed": "ts-node prisma/seed.ts"
+}
+```
+
+If you are using ESM (ECMAScript modules):
+
+```json
+"prisma": {
+  "seed": "node --loader ts-node/esm prisma/seed.ts"
+}
+```
+
+Normally you already have the required dependencies and, if not install them.
 
 ```sh
-npx prisma db seed --preview-feature
+yarn add -D ts-node typescript @types/node
 ```
+
+Finally to seed the database, run the following command:
+
+```sh
+npx prisma db seed
+```
+
+The `car_brand` table should now be populated with a couple of car brands.
 
 ## User Model
 
@@ -613,6 +658,10 @@ npx prisma generate
 Time to create a Prisma-specific implementation of the `UserRepository`. Add a file called `prisma-user.repository.ts` in the same location as the `user.repository.ts` file.
 
 ```ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { User, UserRepository } from './user.repository';
+
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -636,6 +685,10 @@ export class PrismaUserRepository implements UserRepository {
 Register the `PrismaUserRepository` as a provider in the `AuthenticationModule` (`authentication.module.ts`). We must also import the `PrismaModule` as we inject the `PrismaService` in the `PrismaUserRepository`.
 
 ```ts
+...
+import { PrismaUserRepository } from './repositories/prisma-user.repository';
+import { UserRepository } from './repositories/user.repository';
+
 @Module({})
 export class AuthenticationModule {
   public static register(options: AuthenticationModuleOptions): DynamicModule {
@@ -665,16 +718,23 @@ yarn add @types/bcryptjs -D
 The new implementation looks as follows.
 
 ```ts
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User, UserRepository } from './repositories/user.repository';
+import { compare } from 'bcryptjs';
+
+export type AuthenticatedUser = Omit<User, 'hashedPassword'>;
+
 @Injectable()
 export class AuthenticationService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   public async validate(
     username: string,
-    password: string,
+    password: string
   ): Promise<AuthenticatedUser | null> {
     const user: User = await this.userRepository.findByUsername(username);
 
@@ -692,6 +752,27 @@ export class AuthenticationService {
 }
 ```
 
+The `User` type also slightly changed. The `password` property was renamed to `hashedPassword`. Be sure to ommit it from the `AuthenticatedUser` type as shown above.
+
+Also make sure to import the `PrismaModule` into the authentication module, so that the `PrismaService` provider is available.
+
+```ts
+@Module({})
+export class AuthenticationModule {
+  public static register(options: AuthenticationModuleOptions): DynamicModule {
+    return {
+      module: AuthenticationModule,
+      providers: [...]
+      controllers: [...],
+      imports: [
+        PrismaModule,
+        ...
+      ],
+    };
+  }
+}
+```
+
 We're almost there. Let's seed some user data into our database. Open the `seed.ts` file and add the following code to the `main()` function. I already generated hashes for the passwords for you.
 
 ```ts
@@ -700,8 +781,9 @@ await prisma.user.upsert({
   update: {},
   create: {
     username: 'Bob',
-    hashedPassword: '$2a$08$hZCfpa2XVRshMkKwPGqnHOFjp9ldeTZWpt5Ph9.MH6Bhquw6i5byi' // abc123
-  }
+    hashedPassword:
+      '$2a$08$hZCfpa2XVRshMkKwPGqnHOFjp9ldeTZWpt5Ph9.MH6Bhquw6i5byi', // abc123
+  },
 });
 
 await prisma.user.upsert({
@@ -709,18 +791,18 @@ await prisma.user.upsert({
   update: {},
   create: {
     username: 'Alice',
-    hashedPassword: '$2a$08$2cF6keVw/M0QAy3f9GWIdO1d9ubns0B19EIKlXSmI62gt474SbNMK' // def456
-  }
+    hashedPassword:
+      '$2a$08$2cF6keVw/M0QAy3f9GWIdO1d9ubns0B19EIKlXSmI62gt474SbNMK', // def456
+  },
 });
 ```
 
 Seed the database again to add the users.
 
 ```sh
-npx prisma db seed --preview-feature
+npx prisma db seed
 ```
 
 Voila, no more in-memory data! The quotes, car brands, and users are now all persisted in the database!
 
- **Remark**: Now that we've fully migrated from [Knex.js](http://knexjs.org/) to [Prisma](http://www.prisma.io) you can remove the Knex dependencies and Knex-specific code. In this demo repository, I'll only comment out the `KnexModule.forRootAsync()` call in the `AppModule` (`app.module.ts`). I'll leave the Knex-specific code and dependencies intact but feel free to remove them in your repository.
- 
+**Remark**: Now that we've fully migrated from [Knex.js](http://knexjs.org/) to [Prisma](http://www.prisma.io) you can remove the Knex dependencies and Knex-specific code. In this demo repository, I'll only comment out the `KnexModule.forRootAsync()` call in the `AppModule` (`app.module.ts`). I'll leave the Knex-specific code and dependencies intact but feel free to remove them in your repository.

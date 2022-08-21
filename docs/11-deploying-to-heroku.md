@@ -8,8 +8,8 @@ https://signup.heroku.com/login
 
 You also need to install the Heroku CLI. Download the installation package for your OS.
 
-* [Windows - 64 bit installer](https://cli-assets.heroku.com/heroku-x64.exe)
-* [Windows - 32 bit installer](https://cli-assets.heroku.com/heroku-x86.exe)
+- [Windows - 64 bit installer](https://cli-assets.heroku.com/heroku-x64.exe)
+- [Windows - 32 bit installer](https://cli-assets.heroku.com/heroku-x86.exe)
 
 On `macOS` you can use [Homebrew](https://brew.sh/) to install the CLI.
 
@@ -35,28 +35,28 @@ Let's verify if the installation worked.
 
 ```sh
 heroku --version
-heroku/7.59.0 darwin-x64 node-v12.21.0
+heroku/7.62.0 darwin-x64 node-v14.19.0
 ```
 
 You should see `heroku/major.minor.path` in the output.
 
 ## Environment Variables
 
-There are some places in the code where certain values such as the database name, secret to sign JWT tokens, a global prefix for every HTTP route path...etc. are hardcoded. We need to replace these hardcoded values with environment variables that we can configure on the hosting environment. 
+There are some places in the code where certain values such as the database name, secret to sign JWT tokens, a global prefix for every HTTP route path...etc. are hardcoded. We need to replace these hardcoded values with environment variables that we can configure on the hosting environment.
 
 During this course, we've used the following environment variables.
 
-| Name              | Description                           | Type    | Default value |
-| ------------------| ------------------------------------- | ------- | ------------- |
-| PORT              | port on which the HTTP server listens | number  | `3000`        |
-| GLOBAL_PREFIX     | prefix for every HTTP route path.     | string  | `api`         |
-| DATABASE_URL      | URL to the datab ase                  | string  | /             |
-| POSTGRES_HOST     | PostgreSQL Database Host              | string  | /             |
-| POSTGRES_USER     | PostgreSQL Database User              | string  | /             |
-| POSTGRES_PASSWORD | PostgreSQL Database Password          | string  | /             |
-| DB_NAME           | PostgreSQL Database Name              | string  | /             |
-| JWT_SECRET        | Secret used to sign JWT tokens        | string  | /             |
-| JWT_EXPIRES_IN    | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"  | string  | `1h` |
+| Name              | Description                                                                                                                       | Type   | Default value |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------- |
+| PORT              | port on which the HTTP server listens                                                                                             | number | `3000`        |
+| GLOBAL_PREFIX     | prefix for every HTTP route path.                                                                                                 | string | `api`         |
+| DATABASE_URL      | URL to the datab ase                                                                                                              | string | /             |
+| POSTGRES_HOST     | PostgreSQL Database Host                                                                                                          | string | /             |
+| POSTGRES_USER     | PostgreSQL Database User                                                                                                          | string | /             |
+| POSTGRES_PASSWORD | PostgreSQL Database Password                                                                                                      | string | /             |
+| DB_NAME           | PostgreSQL Database Name                                                                                                          | string | /             |
+| JWT_SECRET        | Secret used to sign JWT tokens                                                                                                    | string | /             |
+| JWT_EXPIRES_IN    | Expiration time of the JWT tokens. Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d" | string | `1h`          |
 
 **Remark**: If you prefer `Knex`, you'll need the `POSTGRES_HOST` and `DB_NAME` environment variables. For `Prisma`, you'll only need the `DATABASE_URL` environment variable. The `docker-compose.yml` file also uses the `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables.
 
@@ -187,7 +187,7 @@ This will open up a browser to allow you to log in. After logging in you can clo
 heroku whoami
 ```
 
-This will echo back the username of the Heroku account which is currently logged in. 
+This will echo back the username of the Heroku account which is currently logged in.
 
 Now you can create an application. Via the `--region` flag you can specify a region, United States (`us`) or Europe (`eu`).
 
@@ -253,7 +253,7 @@ CREATE TABLE "user" (
 CREATE UNIQUE INDEX "user.username_unique" ON "user"("username");
 ```
 
-Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificated, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku.
+Last, but not least for `Knex` we need to modify the bit of code that creates the connection to the database. If you use `Knex` open the root module file (`app.module.ts`) and modify the configuration passed to `KnexModule.forRootAsync()`. Take note of the new `ssl` options. The `pg` package used to establish the connection enables SSL validation by default. Heroku uses self-signed certificates, hence we need to turn this off or the connection will not succeed. For more information see the [Connecting in Node.js](https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js) documentation on Heroku.
 
 ```ts
 @Module({
@@ -306,13 +306,13 @@ If you use `Prisma` and you placed the Prisma schema file (`schema.prisma`) in a
 
 This way we are sure only the contents of the `src` folder are compiled and copied into the output directory. This way the `start:prod` script can locate the `main` script and start the application. (`node dist/main`).
 
-Finally, we are ready to deploy our application. Under the `Settings` tab of your Heroku application copy the `Heroku GIT URL`. Add a new GIT remote to your local repository with the name `heroku`.
+Finally, we are ready to deploy our application. Under the `Settings` tab of your Heroku application copy the `Heroku GIT URL`. Add a new GIT remote to your local repository with the name `heroku`. If you used the Heroku CLI to create the app from within your repository's directory it will have added the `heroku` remote for you already. You can skip this step.
 
 ```sh
 git remote add heroku https://git.heroku.com/nestjs-getting-started.git
 ```
 
-You should now have two GIT remotes configured for your local repository, `origin` and `heroku`.
+Provided you had setup a GIT repository initially when you started with this course you should now have two GIT remotes configured for your local repository, `origin` and `heroku`.
 
 ```sh
 git remote
@@ -320,7 +320,7 @@ heroku
 origin
 ```
 
-All we need to do to deploy our application is to push the code to the GIT repository on Heroku. Before we do so make sure all the changes are committed. Afterward, push the `master` branch to the remote repository identified by the `heroku` alias. 
+All we need to do to deploy our application is to push the code to the GIT repository on Heroku. Before we do so make sure all the changes are committed. Afterward, push the `master` branch to the remote repository identified by the `heroku` alias.
 
 ```sh
 git push heroku master:master
@@ -350,9 +350,9 @@ Open the URL in your browser and append the global prefix `api` to it.
 For the Prisma-specific implementation, you still need to seed the database after the first deployment. Just copy the database URI from the database credentials section in the PostgreSQL resource on Heroku. Configure the `DATABASE_URL` environment locally and run the Prisma seed command.
 
 ```sh
- npx prisma db seed --preview-feature
+npx prisma db seed
 ```
 
-This command should be part of an automated CI/CD pipeline. I do not recommend running it locally to deploy changes to a production database. It is not good practice to have access to the production database URL locally. Consider making the Prisma schema the single source of truth. Have a look into deploying database changes with [prisma migrate](https://www.prisma.io/docs/guides/deployment/deploy-database-changes-with-prisma-migrate). 
+This command should be part of an automated CI/CD pipeline. I do not recommend running it locally to deploy changes to a production database. It is not good practice to have access to the production database URL locally. Consider making the Prisma schema the single source of truth. Have a look into deploying database changes with [prisma migrate](https://www.prisma.io/docs/guides/deployment/deploy-database-changes-with-prisma-migrate).
 
 Yay, our application is now up and running on Heroku!
