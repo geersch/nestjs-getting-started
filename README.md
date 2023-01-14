@@ -49,13 +49,13 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 
 1. [What is an Exception Filter?](./docs/07-exception-filters.md)
 2. [Catching Custom Exceptions with Filters](./docs/07-exception-filters.md)
-2. [Binding Filters](./docs/07-exception-filters.md)
+3. [Binding Filters](./docs/07-exception-filters.md)
 
 ## Middleware
 
 1. [What is Middleware?](./docs/08-middleware.md)
 2. [Configuring Middleware](./docs/08-middleware.md)
-4. [ExpressJS Middleware](./docs/08-middleware.md)
+3. [ExpressJS Middleware](./docs/08-middleware.md)
 
 ## Add PostgreSQL with Knex
 
@@ -74,16 +74,24 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 6. [Seeding the Database](./docs/10-prisma.md)
 7. [User Model](./docs/10-prisma.md)
 
+## Vitest
+
+1. [Introducing Vitest](./docs/11-vitest.md)
+2. [Mocks](./docs/11-vitest.md)
+3. [Unit Tests](./docs/11-vitest.md)
+4. [End-to-end (e2e) Tests](./docs/11-vitest.md)
+5. [Considerations](./docs/11-vitest.md)
+
 ## Deploying to Heroku
 
-1. [Prerequisites](./docs/11-deploying-to-heroku.md)
-2. [Environment Variables](./docs/11-deploying-to-heroku.md)
-3. [The Procfile](./docs/11-deploying-to-heroku.md)
-4. [Creating a Heroku Application](./docs/11-deploying-to-heroku.md)
-5. [Setting up a PostgreSQL Database](./docs/11-deploying-to-heroku.md)
-6. [Application Environment](./docs/11-deploying-to-heroku.md)
-7. [Deployment](./docs/11-deploying-to-heroku.md)
+1. [Prerequisites](./docs/12-deploying-to-heroku.md)
+2. [Environment Variables](./docs/12-deploying-to-heroku.md)
+3. [The Procfile](./docs/12-deploying-to-heroku.md)
+4. [Creating a Heroku Application](./docs/12-deploying-to-heroku.md)
+5. [Setting up a PostgreSQL Database](./docs/12-deploying-to-heroku.md)
+6. [Application Environment](./docs/12-deploying-to-heroku.md)
+7. [Deployment](./docs/12-deploying-to-heroku.md)
 
 ## Other Building Blocks
 
-1. [Other Building Blocks](./docs/12-other-building-blocks.md)
+1. [Other Building Blocks](./docs/13-other-building-blocks.md)
