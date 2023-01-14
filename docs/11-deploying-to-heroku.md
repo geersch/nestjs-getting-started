@@ -50,7 +50,7 @@ During this course, we've used the following environment variables.
 | ----------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------- |
 | PORT              | port on which the HTTP server listens                                                                                             | number | `3000`        |
 | GLOBAL_PREFIX     | prefix for every HTTP route path.                                                                                                 | string | `api`         |
-| DATABASE_URL      | URL to the datab ase                                                                                                              | string | /             |
+| DATABASE_URL      | URL to the database                                                                                                               | string | /             |
 | POSTGRES_HOST     | PostgreSQL Database Host                                                                                                          | string | /             |
 | POSTGRES_USER     | PostgreSQL Database User                                                                                                          | string | /             |
 | POSTGRES_PASSWORD | PostgreSQL Database Password                                                                                                      | string | /             |
