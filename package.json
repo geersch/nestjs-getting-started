@@ -12,9 +12,9 @@
   "author": "Christophe Geers",
   "homepage": "https://github.com/geersch/nestjs-getting-started#readme",
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
-    "husky": "^8.0.1"
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "husky": "^8.0.3"
   },
   "dependencies": {}
 }
