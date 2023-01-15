@@ -183,13 +183,191 @@ yarn test --coverage
 
 ![Vitest Coverage](./assets/images/vitest-coverage.png)
 
-## Mocks
-
-Lorem ipsum dolor, sit amet.
-
 ## Unit Tests
 
-Lorem ipsum dolor, sit amet.
+### Mocks
+
+Before we can add some unit tests we'll have to add some mock implementations for the car brand and quote repositories. We don't want the unit tests to talk to the database. Rather we want to stub out this dependency and control the data ourselves.
+
+Create a `test` folder in the root of the repository and add a `mocks` folder to it. Next add a `mock-car-brand.repository.ts` and `mock-car-insurance-quote.repository.ts` file to the `mocks` folder and finally a barrel file (`index.ts`).
+
+Your project structure should resemble this:
+
+```
+.
+├── src
+│   ├── ...
+│   └── main.ts
+├── test
+│   └── mocks
+│       ├── index.ts
+│       ├── mock-car-brand.repository.ts
+│       └── mock-car-insurance-quote.repository.ts
+├── ...
+└── package.json
+```
+
+Let's setup an in-memory list of car brands. Copy paste the below code into the `mock-car-brand.repository.ts` file.
+
+```ts
+import {
+  CarBrand,
+  CarBrandRepository,
+} from '../../src/car-insurance-quote/repositories';
+
+const BRANDS: CarBrand[] = [
+  {
+    id: 1,
+    name: 'Mercedes',
+    minimumDriverAge: 18,
+    yearlyPremium: 1000,
+  },
+  { id: 2, name: 'BMW', minimumDriverAge: 18, yearlyPremium: 1250 },
+  { id: 3, name: 'Audi', minimumDriverAge: 18, yearlyPremium: 1500 },
+  {
+    id: 4,
+    name: 'Porsche',
+    minimumDriverAge: 25,
+    yearlyPremium: 2500,
+  },
+];
+
+export class MockCarBrandRepository extends CarBrandRepository {
+  public async findById(id: number): Promise<CarBrand | null> {
+    const brand = BRANDS.find((car) => car.id === id);
+    return brand ?? null;
+  }
+}
+```
+
+We'll also store the quotes created during the tests in-memory. Add the following code to the `mock-car-insurance-quote.repository.ts` file.
+
+```ts
+import {
+  CarInsuranceQuote,
+  CarInsuranceQuoteRepository,
+} from '../../src/car-insurance-quote/repositories';
+
+export class MockCarInsuranceQuoteRepository extends CarInsuranceQuoteRepository {
+  private quotes: CarInsuranceQuote[] = [];
+
+  public async save(
+    ageOfDriver: number,
+    monthlyPremium: number,
+    yearlyPremium: number
+  ): Promise<CarInsuranceQuote> {
+    const quote = {
+      id: this.quotes.length + 1,
+      ageOfDriver,
+      monthlyPremium,
+      yearlyPremium,
+      createdOn: new Date(),
+    };
+    this.quotes.push(quote);
+    return quote;
+  }
+
+  public async load(id: number): Promise<CarInsuranceQuote | null> {
+    const quote = this.quotes.find((quote) => quote.id === id);
+    return quote ?? null;
+  }
+}
+```
+
+It's a simple, but for testing purposes it suffices.
+
+Last, but not least let's export these mocks through the barrel file (`index.ts`) file.
+
+```ts
+export * from './mock-car-brand.repository';
+export * from './mock-car-insurance-quote.repository';
+```
+
+### Tests
+
+Let's start by adding some tests for the `QuoteService`. Add a `quote.service.spec.ts` file next to the `quote.service.ts` file. Copy paste the below code in it.
+
+```ts
+import { beforeEach, describe, expect, it } from 'vitest';
+import { QuoteService } from './quote.service';
+import {
+  DriveTooYoungError,
+  PurchasePriceTooLowError,
+  RiskTooHighError,
+  UnknownCarBrandError,
+} from './errors';
+import {
+  MockCarBrandRepository,
+  MockCarInsuranceQuoteRepository,
+} from '../../test';
+
+describe('QuoteService', () => {
+  let quoteService: QuoteService;
+
+  beforeEach(() => {
+    quoteService = new QuoteService(
+      new MockCarBrandRepository(),
+      new MockCarInsuranceQuoteRepository()
+    );
+  });
+
+  ...
+});
+```
+
+As you can see we don't rely on NestJS's dependency injection system to create a `QuoteService` instance for us. Instead we create it ourselves and pass in instances of the mock repositories we created earlier. This way we stub out the dependency to the database and know which data the tests work with.
+
+Now let's add the following tests below the `beforeEach` block.
+
+```ts
+it('should calculate a premium', async () => {
+  const quote = await quoteService.calculatePremium(18, 1, 40000);
+  expect(quote.monthlyPremium).toEqual(83);
+  expect(quote.yearlyPremium).toEqual(1000);
+});
+
+it('should reject the quote for an unknown brand', async () => {
+  await expect(() =>
+    quoteService.calculatePremium(18, 101, 37500)
+  ).rejects.toThrow(UnknownCarBrandError);
+});
+
+it('should reject the quote if the minimum purchase price is too low', async () => {
+  await expect(() =>
+    quoteService.calculatePremium(18, 2, 4000)
+  ).rejects.toThrow(PurchasePriceTooLowError);
+});
+
+it('should reject the quote if the driver is too young', async () => {
+  await expect(() =>
+    quoteService.calculatePremium(17, 3, 55000)
+  ).rejects.toThrow(DriveTooYoungError);
+});
+
+it('should reject the quote if the risk is too high', async () => {
+  await expect(() =>
+    quoteService.calculatePremium(18, 4, 75000)
+  ).rejects.toThrow(RiskTooHighError);
+});
+```
+
+We added 5 tests that each test a different case that can occur when calculating a quote. We want to be sure that the minimum age is respected, that the risk is not to high, the driver is not too young...etc.
+
+If you now run the tests, you should see that the tests succeed.
+
+```sh
+yarn test
+```
+
+![Vitest Unit Tests](./assets/images/vitest-unit-tests.png)
+
+You also configure another [reporter](https://vitest.dev/config/#reporters) (e.g. `verbose`) to see more information about the tests that were executed. The `default` reporter collapses tests suites once excecuted.
+
+![Vitest Verbose Reporter](./assets/images/vitest-verbose-reporter.png)
+
+Should one or more of the tests fail, you'll see more detailed information.
+
+![Vitest Failed Unit Test](./assets/images/vitest-failed-unit-test.png)
 
 ## End-to-end (e2e) Tests
 
@@ -202,11 +380,3 @@ Lorem ipsum dolor, sit amet.
 ## Considerations
 
 Lorem ipsum dolor, sit amet.
-
-```
-
-```
-
-```
-
-```
