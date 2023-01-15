@@ -110,6 +110,7 @@ yarn add -D vitest
 To configure Vitest add a `vite.config.ts` to the root of the repository. For projects that already use Vite this file already exists. Vitest configuration is unified with that of Vite. Everything is configured in the same file. In our setup, that's not the case so we have to configure it from scratch. Copy paste the following configuration to the file.
 
 ```ts
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -420,14 +421,13 @@ describe('QuoteController (e2e)', () => {
 
 Using the `Test` utility class from the [@nestjs/testing](https://docs.nestjs.com/fundamentals/testing#testing-utilities) package we spin up a NestJS application that we can test against. Using [supertest](https://github.com/ladjs/supertest) we can perform an HTTP request against our REST API that involves the whole stack and perform expectations against the response.
 
-We'll just add one test to this test suite which does a simple `GET` request for an unknown quote and verifies that the response returns a `404 Not Found` status code.
+We'll just add one test to this test suite which does a simple `GET` request to retrieve a quote and verifies that the request is authenticated. It must return a `401 Unauthorized` status code.
 
 ```ts
-it('should a 404 Not Found status code for an unknown quote', () => {
-  return request(app.getHttpServer()).get('/9001').expect(404).expect({
-    statusCode: 404,
-    message: 'Cannot GET /9001',
-    error: 'Not Found',
+it('should return a 401 Unauthorized status code when retrieving a quote', () => {
+  return request(app.getHttpServer()).get('/quote/9001').expect(401).expect({
+    message: 'Unauthorized',
+    statusCode: 401,
   });
 });
 ```
@@ -437,6 +437,7 @@ Since it's an e2e test it will actually contact the database, so make sure you h
 Let us first create a dedicated Vitest configuration for the e2e tests. Add a new file called `vitest.config-e2e.ts` to the root of the repository.
 
 ```ts
+/// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
@@ -499,6 +500,7 @@ yarn -D add unplugin-swc @swc/core -D
 And modify the `vitest.config-e2e.ts` file to load it.
 
 ```ts
+/// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite';
 import swc from 'unplugin-swc';
 
@@ -525,13 +527,78 @@ Ah, that's better!
 
 ## Debugging
 
-### Launch Config
+### Launch Configuration
 
-Lorem ipsum dolor, sit amet.
+To debug a test file in VSCode Vitest recommends the following launch configuration:
 
-### VS Code Extension
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Current Test File",
+      "autoAttachChildProcesses": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"],
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}"],
+      "smartStep": true,
+      "console": "integratedTerminal"
+    }
+  ]
+}
+```
 
-Lorem ipsum dolor, sit amet.
+In the debug tab, select `Debug Current Test File`, open the test suite you want to debug and press `F5` to start debugging.
+
+Personally I experienced issues with this launch configuration. At the time of writing it took forever for the first breakpoint to be hit. I debugged this for quite some time and found out it was due to the `Just My Code` feature. Using the [skipFiles](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_skipping-uninteresting-code) option you can specify glob patterns for script paths that the built-in debugger for NodeJS should skip. In the above configuration it is set to `["<node_internals>/**", "**/node_modules/**"]`. The huge amount of files in `node_modules` is what makes it extremely slow. I could reproduce this with Jest as well and apparently it has been [reported before](https://github.com/microsoft/vscode-js-debug/issues/117) before. This is issue is closed and supposedly resolved, but it did not improve the performance for me. In the end, I just removed the `skipFiles` and `smartStep` options and everything started working smooth and fast.
+
+By default this launch configuration will start Vitest without the `--config` flag so it will use the configuration exported by the `vitest.config.ts` file, which is great for debugging the unit tests, but it won't work for debugging the e2e tests. We can quickly remedy this by adding a new launch configuration just for the e2e tests and passing the correct configuration via the arguments option.
+
+I have 2 launch configurations, one for debugging unit tests and one for debugging e2e tests.
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Current Unit Test Suite",
+      "autoAttachChildProcesses": true,
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}"],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Current e2e Test Suite",
+      "autoAttachChildProcesses": true,
+      "program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+      "args": ["run", "${relativeFile}", "--config", "vitest.config-e2e.ts"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
+```
+
+### VSCode Extension
+
+Vitest also offers a VSCode extension to run and debug tests. It's currently in preview and you can find it on the marketplace.
+
+https://marketplace.visualstudio.com/items?itemName=ZixuanChen.vitest-explorer
+
+![Vitest Explorer](./assets/images/vitest-explorer.png)
+
+However it suffers from the same issue mentioned in the previous point as it basically hardcodes the launch configuration suggested by Vitest.
+
+https://github.com/vitest-dev/vscode/blob/306eda3f14802a2905f4fa9be71826147cc0d7d7/src/runHandler.ts#L288
+
+I made a pull request to make `skipFiles` configurable for the plugin. At the time of writing it has not been reviewed / merged yet. Let's hope that will happen soon. You can always fork the extension, modify it and package it yourself or just use the launch configurations.
+
+You might experience other issues with the plugin, but for most cases it works sufficiently well and it is regularly worked on and improved.,
 
 ## Considerations
 
