@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
         reporter: ['text', 'html'],
       },
       reporters: 'default',
-      include: ['**/*.e2e-spec.{ts,cts}'],
+      include: ['**/*.e2e-spec.ts'],
     },
     root: '.',
   };

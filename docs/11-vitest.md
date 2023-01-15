@@ -97,7 +97,91 @@ The last remaining thing is to remove the `jest` section from `package.json`. Go
 
 ## Adding Vitest
 
-Lorem ipsum dolor, sit amet.
+### Configuring Vitest
+
+Now that everything's been cleaned up we can start with a clean slate. Let's add Vitest.
+
+```sh
+yarn add -D vitest
+```
+
+**Remark**: Vitest requires Vite `>= v3.0.0` and Node `>= v14.0`.
+
+To configure Vitest add a `vite.config.ts` to the root of the repository. For projects that already use Vite this file already exists. Vitest configuration is unified with that of Vite. Everything is configured in the same file. In our setup, that's not the case so we have to configure it from scratch. Copy paste the following configuration to the file.
+
+```ts
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [],
+  test: {
+    deps: {
+      interopDefault: true,
+    },
+    environment: 'node',
+    coverage: {
+      reporter: ['text', 'html'],
+    },
+    reporters: 'default',
+    include: ['**/*.spec.{ts,cts}'],
+  },
+  root: '.',
+});
+```
+
+Using [defineConfig](https://vitejs.dev/config) imported from `vite` we add a `test` section that contains the configuration for Vitest. Here we configure the environment (`node`), the test report (`default`), the coverage reporters (`test`, `html`), the test files (`*.spec.ts`) to include and set `interopDefault` to `true` to make sure Vitest interpretes CommonJS (CJS) module's default export as a named export. For more in-depth documentation about all the possible configuration option, consult the [Vitest documentation](https://vitest.dev/guide/).
+
+Voila, you are now ready to run tests using Vitest. Just use the `test` script we setup earlier.
+
+```ts
+yarn test
+```
+
+Of course, we don't have any tests yet, so you'll get the following error.
+
+![Vitest Run](./assets/images/vitest-run.png)
+
+Don't worry, we'll soon add some tests.
+
+### UI
+
+Vite, which powers Vitest, also provides a development server which allows it to also serve up a UI to visualise your tests. It's an optional dependency, but if you are interested you can install it.
+
+```sh
+yarn add -D @vitest-ui
+```
+
+Just pass the `--ui` flag when runnig the test script.
+
+```sh
+yarn test --ui
+```
+
+![Vitest UI](./assets/images/vitest-ui.png)
+
+### Coverage
+
+Another optional dependency you can install is one to calculate the code coverage. Vitest supports native code coverage via [c8](https://github.com/bcoe/c8) and instrumented code coverage via [istanbul](https://istanbul.js.org/).
+
+For `c8`:
+
+```sh
+yarn add -D @vitest/coverage-c8
+```
+
+Or for `istanbul`:
+
+```sh
+yarn add -D @vitest/coverage-istanbul
+```
+
+You can then generate coverage by passing the `--coverage` flag to the test script.
+
+```sh
+yarn test --coverage
+```
+
+![Vitest Coverage](./assets/images/vitest-coverage.png)
 
 ## Mocks
 
@@ -118,3 +202,11 @@ Lorem ipsum dolor, sit amet.
 ## Considerations
 
 Lorem ipsum dolor, sit amet.
+
+```
+
+```
+
+```
+
+```

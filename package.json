@@ -16,5 +16,6 @@
     "@commitlint/config-conventional": "^17.4.2",
     "husky": "^8.0.3"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "license": "UNLICENSED"
 }
