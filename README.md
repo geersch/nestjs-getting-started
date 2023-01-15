@@ -79,11 +79,10 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 1. [Introducing Vitest](./docs/11-vitest.md)
 2. [Removing Jest](./docs/11-vitest.md)
 3. [Adding Vitest](./docs/11-vitest.md)
-4. [Mocks](./docs/11-vitest.md)
-5. [Unit Tests](./docs/11-vitest.md)
-6. [End-to-end (e2e) Tests](./docs/11-vitest.md)
-7. [VS Code Extension](./docs/11-vitest.md)
-8. [Considerations](./docs/11-vitest.md)
+4. [Unit Tests](./docs/11-vitest.md)
+5. [End-to-end (e2e) Tests](./docs/11-vitest.md)
+6. [VS Code Extension](./docs/11-vitest.md)
+7. [Considerations](./docs/11-vitest.md)
 
 ## Deploying to Heroku
 
