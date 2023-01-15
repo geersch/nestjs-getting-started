@@ -41,7 +41,7 @@ After a few moments, your new project will be ready.
 
 ## Project Structure
 
-Let's explore the structure of our NestJS application. The CLI created a project directory called `acme-api`. Open up the `acme-api` folder in VS Code.
+Let's explore the structure of our NestJS application. The CLI created a project directory called `acme-api`. Open up the `acme-api` folder in VSCode.
 
 ```sh
 cd acme-api

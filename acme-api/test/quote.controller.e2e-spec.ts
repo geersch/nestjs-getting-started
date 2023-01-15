@@ -20,11 +20,10 @@ describe('QuoteController (e2e)', () => {
     await app.close();
   });
 
-  it('should a 404 Not Found status code for an unknown quote', () => {
-    return request(app.getHttpServer()).get('/9001').expect(404).expect({
-      statusCode: 404,
-      message: 'Cannot GET /9001',
-      error: 'Not Found',
+  it('should return a 401 Unauthorized status code when retrieving a quote', () => {
+    return request(app.getHttpServer()).get('/quote/9001').expect(401).expect({
+      message: 'Unauthorized',
+      statusCode: 401,
     });
   });
 });
