@@ -2,7 +2,12 @@
   "name": "acme-api",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Christophe Geers",
+   "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geersch/nestjs-getting-started.git"
+  },
+  "homepage": "https://github.com/geersch/nestjs-getting-started#readme",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

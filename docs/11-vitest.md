@@ -600,6 +600,72 @@ I made a pull request to make `skipFiles` configurable for the plugin. At the ti
 
 You might experience other issues with the plugin, but for most cases it works sufficiently well and it is regularly worked on and improved.,
 
-## Considerations
+## Caveats
 
-Lorem ipsum dolor, sit amet.
+### Jest Compatible
+
+Should you happen to have already written tests using Jest, then rest assured migrated to Vitest is straightforward. Vitest has been designed with a Jest compatible API. Except, snapshots, code coverage and more are all supported.
+
+- `jest.mock()` becomes `vi.mock()`
+- `jest.setTimeout()` becomes `vi.setConfig({ hookTimeout, testTimeout })`
+- `jest.fn()` becomes `vi.fn()`
+- ...
+
+For more information consult this migration guide:
+
+https://vitest.dev/guide/migration.html
+
+### Hooks
+
+There are some subtle differences between how Vitest and Jest deal with the `beforeAll`, `beforeEach`, `afterAll` and `afterEach` hooks. Jest executes them sequentially in the order they were declared, but Vitest runs run them in parallel. If you happen to rely upon this behaviour you can change the order in which the hooks are executed via the `sequence.hooks` option.
+
+https://vitest.dev/config/#sequence-hooks
+
+Another difference is that you can return a clean up function from a hook which is called once after all tests are run.
+
+```ts
+import { beforeAll } from 'vitest';
+
+beforeAll(async () => {
+  // called once before all tests run
+  await startMocking();
+
+  // clean up function, called once after all tests run
+  return async () => {
+    await stopMocking();
+  };
+});
+```
+
+### Namespace Imports
+
+The tests suites (`*.spec.ts`, `*.e2e-spec.ts`) are transpiled to ESM. Because of this, [namespace imports](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#namespace_import) (`import * from`) might break.
+
+```ts
+import * request from 'supertest';
+
+describe('test suite', () => {
+  it('GET /quote/:id', () => {
+    ...
+    request(app)
+      .get('/quote/1')
+      .expect(200);
+  })
+});
+```
+
+Invoking `request()` is illegal to the ES6 spec. A namespace import creates an identifier that is a module object. This object should contain the named exports, including the default export. It should never be callable or newable. This might work in some runtime and transpilation environments, but it is not valid. It might break at any point in the future.
+
+Avoid this syntax unless it is valid. For tests suites you can just replace:
+
+```ts
+import * request from 'supertest';
+```
+
+with
+
+```ts
+import request from 'supertest';
+```
+
+Using the default import from the module will work fine when running the tests. For dependencies that are also used by the application, you might have to restort to using `require`, but do apply this only when necessary.
