@@ -124,7 +124,7 @@ export default defineConfig({
       reporter: ['text', 'html'],
     },
     reporters: 'default',
-    include: ['**/*.spec.{ts,cts}'],
+    include: ['**/*.spec.ts'],
   },
   root: '.',
 });
@@ -517,7 +517,7 @@ export default defineConfig(({ mode }) => {
 });
 ```
 
-You just need to import the `swc` plugin and register it in the `plugins` options. It will disable `esbuild` for you and use `SWC` to do the transpilation.
+You just need to import the `swc` plugin and register it in the `plugins` option. It will disable `esbuild` for you and use `SWC` to do the transpilation.
 
 Let's run the tests again.
 
@@ -656,7 +656,7 @@ describe('test suite', () => {
 
 Invoking `request()` is illegal to the ES6 spec. A namespace import creates an identifier that is a module object. This object should contain the named exports, including the default export. It should never be callable or newable. This might work in some runtime and transpilation environments, but it is not valid. It might break at any point in the future.
 
-Avoid this syntax unless it is valid. For tests suites you can just replace:
+Avoid this syntax unless it is valid. For test suites you can just replace:
 
 ```ts
 import * request from 'supertest';
