@@ -121,6 +121,7 @@ export default defineConfig({
     },
     environment: 'node',
     coverage: {
+      provider: 'c8',
       reporter: ['text', 'html'],
     },
     reporters: 'default',
@@ -451,6 +452,7 @@ export default defineConfig(({ mode }) => {
       },
       environment: 'node',
       coverage: {
+        provider: 'c8',
         reporter: ['text', 'html'],
       },
       reporters: 'default',
@@ -508,7 +510,7 @@ export default defineConfig(({ mode }) => {
   ...
 
   return {
-    plugins: [swc.vite(), swc.rollup()],
+    plugins: [swc.vite()],
     test: {
       ...
     },
