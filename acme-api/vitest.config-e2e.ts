@@ -1,18 +1,19 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv } from 'vite';
 import swc from 'unplugin-swc';
+import { defineConfig, loadEnv } from 'vite';
 
 export default defineConfig(({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
 
   return {
-    plugins: [swc.vite(), swc.rollup()],
+    plugins: [swc.vite()],
     test: {
       deps: {
         interopDefault: true,
       },
       environment: 'node',
       coverage: {
+        provider: 'c8',
         reporter: ['text', 'html'],
       },
       reporters: 'default',
