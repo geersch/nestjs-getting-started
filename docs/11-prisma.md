@@ -29,7 +29,7 @@ const newQuote = await prisma.carInsuranceQuote.create({
 
 ## Prisma Schema
 
-At the moment the car insurance quotes are persisted to a PostgreSQL database using [Knex.js](./09-add-postgresql-with-knex.md). Let's switch to Prisma.
+At the moment the car insurance quotes are persisted to a PostgreSQL database using [Knex.js](./10-add-postgresql-with-knex.md). Let's switch to Prisma.
 
 First, install the Prisma Client package.
 
