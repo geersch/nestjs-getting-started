@@ -57,43 +57,50 @@ The NestJS application accompanying this course can be found inside the `acme-ap
 2. [Configuring Middleware](./docs/08-middleware.md)
 3. [ExpressJS Middleware](./docs/08-middleware.md)
 
+## Interceptors
+
+1. [What are Interceptors?](./docs/09-interceptors.md)
+2. [Configuring an Interceptor](./docs/09-interceptors.md)
+3. [Custom Interceptor](./docs/09-interceptors.md)
+
 ## Add PostgreSQL with Knex
 
-1. [Prerequisite: Install Docker](./docs/09-add-postgresql-with-knex.md)
-2. [Running PostgreSQL in a Docker Container](./docs/09-add-postgresql-with-knex.md)
-3. [Introducing Knex](./docs/09-add-postgresql-with-knex.md)
-4. [Persisting the Car Insurance Quotes](./docs/09-add-postgresql-with-knex.md)
+1. [Prerequisite: Install Docker](./docs/10-add-postgresql-with-knex.md)
+2. [Running PostgreSQL in a Docker Container](./docs/10-add-postgresql-with-knex.md)
+3. [Introducing Knex](./docs/10-add-postgresql-with-knex.md)
+4. [Persisting the Car Insurance Quotes](./docs/10-add-postgresql-with-knex.md)
 
 ## Prisma
 
-1. [Introducing Prisma](./docs/10-prisma.md)
-2. [Prisma Schema](./docs/10-prisma.md)
-3. [Prisma Client](./docs/10-prisma.md)
-4. [Persisting the Car Insurance Quotes](./docs/10-prisma.md)
-5. [Car Brand Model](./docs/10-prisma.md)
-6. [Seeding the Database](./docs/10-prisma.md)
-7. [User Model](./docs/10-prisma.md)
+1. [Introducing Prisma](./docs/11-prisma.md)
+2. [Prisma Schema](./docs/11-prisma.md)
+3. [Prisma Client](./docs/11-prisma.md)
+4. [Persisting the Car Insurance Quotes](./docs/11-prisma.md)
+5. [Car Brand Model](./docs/11-prisma.md)
+6. [Seeding the Database](./docs/11-prisma.md)
+7. [User Model](./docs/11-prisma.md)
 
 ## Vitest
 
-1. [Introducing Vitest](./docs/11-vitest.md)
-2. [Removing Jest](./docs/11-vitest.md)
-3. [Adding Vitest](./docs/11-vitest.md)
-4. [Unit Tests](./docs/11-vitest.md)
-5. [End-to-end (e2e) Tests](./docs/11-vitest.md)
-6. [Debugging](./docs/11-vitest.md)
-7. [Caveats](./docs/11-vitest.md)
+1. [Introducing Vitest](./docs/12-vitest.md)
+2. [Removing Jest](./docs/12-vitest.md)
+3. [Adding Vitest](./docs/12-vitest.md)
+4. [Unit Tests](./docs/12-vitest.md)
+5. [End-to-end (e2e) Tests](./docs/12-vitest.md)
+6. [Debugging](./docs/12-vitest.md)
+7. [Caveats](./docs/12-vitest.md)
+8. [Known Issues](./docs/12-vitest.md)
 
 ## Deploying to Heroku
 
-1. [Prerequisites](./docs/12-deploying-to-heroku.md)
-2. [Environment Variables](./docs/12-deploying-to-heroku.md)
-3. [The Procfile](./docs/12-deploying-to-heroku.md)
-4. [Creating a Heroku Application](./docs/12-deploying-to-heroku.md)
-5. [Setting up a PostgreSQL Database](./docs/12-deploying-to-heroku.md)
-6. [Application Environment](./docs/12-deploying-to-heroku.md)
-7. [Deployment](./docs/12-deploying-to-heroku.md)
+1. [Prerequisites](./docs/13-deploying-to-heroku.md)
+2. [Environment Variables](./docs/13-deploying-to-heroku.md)
+3. [The Procfile](./docs/13-deploying-to-heroku.md)
+4. [Creating a Heroku Application](./docs/13-deploying-to-heroku.md)
+5. [Setting up a PostgreSQL Database](./docs/13-deploying-to-heroku.md)
+6. [Application Environment](./docs/13-deploying-to-heroku.md)
+7. [Deployment](./docs/13-deploying-to-heroku.md)
 
 ## Other Building Blocks
 
-1. [Other Building Blocks](./docs/13-other-building-blocks.md)
+1. [Other Building Blocks](./docs/14-other-building-blocks.md)
