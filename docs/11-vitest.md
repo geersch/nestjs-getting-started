@@ -598,9 +598,11 @@ However, it suffers from the same issue mentioned in the previous point as it ha
 
 https://github.com/vitest-dev/vscode/blob/306eda3f14802a2905f4fa9be71826147cc0d7d7/src/runHandler.ts#L288
 
-I made a pull request to make `skipFiles` configurable for the plugin. At the time of writing it has not been reviewed/merged yet. Let's hope that will happen soon. You can always fork the extension, modify it and package it yourself or just use the launch configurations.
+I made a pull request to make `skipFiles` configurable for the plugin. 
 
-You might experience other issues with the plugin, but in most cases, it works sufficiently well and it is regularly worked on and improved.
+https://github.com/vitest-dev/vscode/pull/119
+
+You can configure `skipFiles` via the `debugExclude` option of the plugin.
 
 ## Caveats
 
@@ -671,3 +673,12 @@ import request from 'supertest';
 ```
 
 Using the default import from the module will work fine when running the tests. For dependencies that are also used by the application, you might have to resort to using `require`, but do apply this only when necessary.
+
+## Known Issues
+
+- The VSCode plugin for Vitest has some issues that users have reported. 
+  - Firstly, it often displays an error message stating that it could not find test results when trying to run a test.
+  - Secondly, the plugin does not work well with `describe.each`, `it.each`, or `test.each`. This can lead to unexpected behavior.
+  - Moreover, there seems to be little to no active development on the plugin.
+- Another issue is that code cannot be transpiled with `esbuild` if it relies on decorator metadata being emitted. This is particularly problematic for NestJS, which requires this feature. Although TypeScript 5 supports decorators, it does not yet support emitting decorator metadata, which is a separate proposal that is still in stage 2. There is a proposal by the TC39 committee for decorator metadata, but `esbuild` will only support it if it is implemented by TypeScript.
+- Last, but not least, I experienced issues with the SWC transpiler. While the source maps it generates are usually correct, there are cases where they are not, leading to frustrating debugging sessions. Additionally, version `1.3.39`of SWC introduced a bug where it emits `null` instead of `undefined` in certain edge cases.
