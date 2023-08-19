@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma';
 import {
   CarInsuranceQuote,
   CarInsuranceQuoteRepository,
 } from './car-insurance-quote.repository';
-import { PrismaService } from '../../prisma';
 
 @Injectable()
 export class PrismaCarInsuranceQuoteRepository

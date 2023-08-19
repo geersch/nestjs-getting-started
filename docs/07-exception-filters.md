@@ -25,7 +25,7 @@ export class BusinessRuleViolation extends Error {}
 
 It serves as a base class from which all errors that encapsulate business rule violations extend, such as:
 
-- `DriveTooYoungError`
+- `DriverTooYoungError`
 - `PurchasePriceTooLowError`
 - `RiskTooHighError`
 - ...
@@ -149,7 +149,7 @@ Let's start the application, open a browser and navigate to http://localhost:300
   "message": "Business rule violation",
   "errors": [
     {
-      "name": "DriveTooYoungError"
+      "name": "DriverTooYoungError"
     }
   ]
 }

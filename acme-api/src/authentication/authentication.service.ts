@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User, UserRepository } from './repositories/user.repository';
 import { compare } from 'bcryptjs';
+import { User, UserRepository } from './repositories/user.repository';
 
 export type AuthenticatedUser = Omit<User, 'hashedPassword'>;
 

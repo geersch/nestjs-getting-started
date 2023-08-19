@@ -1,15 +1,15 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { QuoteService } from './quote.service';
-import {
-  DriveTooYoungError,
-  PurchasePriceTooLowError,
-  RiskTooHighError,
-  UnknownCarBrandError,
-} from './errors';
 import {
   MockCarBrandRepository,
   MockCarInsuranceQuoteRepository,
 } from '../../test';
+import {
+  DriverTooYoungError,
+  PurchasePriceTooLowError,
+  RiskTooHighError,
+  UnknownCarBrandError,
+} from './errors';
+import { QuoteService } from './quote.service';
 
 describe('QuoteService', () => {
   let quoteService: QuoteService;
@@ -42,7 +42,7 @@ describe('QuoteService', () => {
   it('should reject the quote if the driver is too young', async () => {
     await expect(() =>
       quoteService.calculatePremium(17, 3, 55000),
-    ).rejects.toThrow(DriveTooYoungError);
+    ).rejects.toThrow(DriverTooYoungError);
   });
 
   it('should reject the quote if the risk is too high', async () => {

@@ -1,12 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { AuthenticationService } from './authentication.service';
-import { LocalStrategy } from './local.strategy';
-import { AuthenticationController } from './authentication.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy, JwtStrategyConfiguration } from './jwt.strategy';
 import { PrismaModule } from '../prisma';
-import { UserRepository } from './repositories/user.repository';
+import { AuthenticationController } from './authentication.controller';
+import { AuthenticationService } from './authentication.service';
+import { JwtStrategy, JwtStrategyConfiguration } from './jwt.strategy';
+import { LocalStrategy } from './local.strategy';
 import { PrismaUserRepository } from './repositories/prisma-user.repository';
+import { UserRepository } from './repositories/user.repository';
 
 export interface AuthenticationModuleOptions {
   jwtSecret: string;

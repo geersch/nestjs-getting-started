@@ -110,8 +110,7 @@ yarn add -D vitest
 To configure Vitest add a `vite.config.ts` to the root of the repository. For projects that use Vite this file already exists. Vitest configuration is unified with that of Vite. Everything is configured in the same file. In our setup, that's not the case so we have to configure it from scratch. Copy and paste the following configuration to the file.
 
 ```ts
-/// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [],
@@ -121,7 +120,7 @@ export default defineConfig({
     },
     environment: 'node',
     coverage: {
-      provider: 'c8',
+      provider: 'v8',
       reporter: ['text', 'html'],
     },
     reporters: 'default',
@@ -131,7 +130,7 @@ export default defineConfig({
 });
 ```
 
-Using [defineConfig](https://vitejs.dev/config) imported from `vite` we add a `test` section that contains the configuration for Vitest. Here we configure the environment (`node`), the test report (`default`), the coverage reporters (`test`, `html`), and the test files (`*.spec.ts`) to include and set `interopDefault` to `true` to make sure Vitest interprets CommonJS (CJS) module's default export as a named export. For more in-depth documentation about all the possible configuration options, consult the [Vitest documentation](https://vitest.dev/guide/).
+Using [defineConfig](https://vitejs.dev/config) imported from `vitest/config` we add a `test` section that contains the configuration for Vitest. Here we configure the environment (`node`), the test report (`default`), the coverage reporters (`test`, `html`), and the test files (`*.spec.ts`) to include and set `interopDefault` to `true` to make sure Vitest interprets CommonJS (CJS) module's default export as a named export. For more in-depth documentation about all the possible configuration options, consult the [Vitest documentation](https://vitest.dev/guide/).
 
 Voila, you are now ready to run tests using Vitest. Just use the `test` script we set up earlier.
 
@@ -163,12 +162,12 @@ yarn test --ui
 
 ### Coverage
 
-Another optional dependency you can install is one to calculate the code coverage. Vitest supports native code coverage via [c8](https://github.com/bcoe/c8) and instrumented code coverage via [istanbul](https://istanbul.js.org/).
+Another optional dependency you can install is one to calculate the code coverage. Vitest supports native code coverage via [v8](https://github.com/demurgos/v8-coverage) and instrumented code coverage via [istanbul](https://istanbul.js.org/).
 
-For `c8`:
+For `v8`:
 
 ```sh
-yarn add -D @vitest/coverage-c8
+yarn add -D @vitest/coverage-v8
 ```
 
 Or for `istanbul`:
@@ -293,7 +292,7 @@ Let's start by adding some tests for the `QuoteService`. Add a `quote.service.sp
 import { beforeEach, describe, expect, it } from 'vitest';
 import { QuoteService } from './quote.service';
 import {
-  DriveTooYoungError,
+  DriverTooYoungError,
   PurchasePriceTooLowError,
   RiskTooHighError,
   UnknownCarBrandError,
@@ -343,7 +342,7 @@ it('should reject the quote if the minimum purchase price is too low', async () 
 it('should reject the quote if the driver is too young', async () => {
   await expect(() =>
     quoteService.calculatePremium(17, 3, 55000)
-  ).rejects.toThrow(DriveTooYoungError);
+  ).rejects.toThrow(DriverTooYoungError);
 });
 
 it('should reject the quote if the risk is too high', async () => {
@@ -438,8 +437,8 @@ Since it's an e2e test it will contact the database, so make sure you have the D
 Let us first create a dedicated Vitest configuration for the e2e tests. Add a new file called `vitest.config-e2e.ts` to the root of the repository.
 
 ```ts
-/// <reference types="vitest" />
-import { defineConfig, loadEnv } from 'vite';
+import { loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => {
   Object.assign(process.env, loadEnv(mode, process.cwd(), ''));
@@ -452,7 +451,7 @@ export default defineConfig(({ mode }) => {
       },
       environment: 'node',
       coverage: {
-        provider: 'c8',
+        provider: 'v8',
         reporter: ['text', 'html'],
       },
       reporters: 'default',
@@ -502,9 +501,9 @@ yarn -D add unplugin-swc @swc/core -D
 And modify the `vitest.config-e2e.ts` file to load it.
 
 ```ts
-/// <reference types="vitest" />
-import { defineConfig, loadEnv } from 'vite';
 import swc from 'unplugin-swc';
+import { loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig(({ mode }) => {
   ...
@@ -526,6 +525,8 @@ Let's run the tests again.
 ![Vitest e2e Tests](./assets/images/vitest-e2e-tests.png)
 
 Ah, that's better!
+
+**Remark**: Since NestJS 10 it's also possible to use `SWC` for both compilation and bundling with the Nest CLI. For more information consult the [SWC recipe](https://docs.nestjs.com/recipes/swc).
 
 ## Debugging
 

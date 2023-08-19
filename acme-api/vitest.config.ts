@@ -1,5 +1,4 @@
-/// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [],
@@ -9,7 +8,7 @@ export default defineConfig({
     },
     environment: 'node',
     coverage: {
-      provider: 'c8',
+      provider: 'v8',
       reporter: ['text', 'html'],
     },
     reporters: 'default',

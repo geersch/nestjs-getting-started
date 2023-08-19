@@ -1,7 +1,7 @@
-import { afterAll, beforeAll, describe, it } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
+import { afterAll, beforeAll, describe, it } from 'vitest';
 import { AppModule } from './../src/app.module';
 
 describe('QuoteController (e2e)', () => {
