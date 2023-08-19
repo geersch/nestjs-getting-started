@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  DriveTooYoungError,
+  DriverTooYoungError,
   PurchasePriceTooLowError,
   RiskTooHighError,
   UnknownCarBrandError,
@@ -32,7 +32,7 @@ export class QuoteService {
     purchasePrice: number,
   ): Promise<Premium> {
     if (ageOfDriver < MINIMUM_AGE) {
-      throw new DriveTooYoungError();
+      throw new DriverTooYoungError();
     }
 
     if (purchasePrice < MINIMUM_PURCHASE_PRICE) {

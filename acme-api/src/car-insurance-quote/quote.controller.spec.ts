@@ -1,11 +1,11 @@
+import { NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { QuoteController } from './quote.controller';
-import { QuoteService } from './quote.service';
 import {
   MockCarBrandRepository,
   MockCarInsuranceQuoteRepository,
 } from '../../test';
-import { NotFoundException } from '@nestjs/common';
+import { QuoteController } from './quote.controller';
+import { QuoteService } from './quote.service';
 
 describe('QuoteController', () => {
   let quoteController: QuoteController;

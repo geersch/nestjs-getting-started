@@ -88,7 +88,7 @@ The error is thrown if the driver is too young to be insured.
 ```ts
 import { BusinessRuleViolation } from './busisness-rule-validation.error';
 
-export class DriveTooYoungError extends BusinessRuleViolation {}
+export class DriverTooYoungError extends BusinessRuleViolation {}
 ```
 
 `purchase-price-too-low.error.ts`
@@ -131,7 +131,7 @@ The method verifies the business rules and throws one of the errors we created e
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { DriveTooYoungError } from './errors/driver-too-young.error';
+import { DriverTooYoungError } from './errors/driver-too-young.error';
 import { PurchasePriceTooLowError } from './errors/purchase-price-too-low.error';
 import { RiskTooHighError } from './errors/risk-too-high.error';
 import { UnknownCarBrandError } from './errors/unknown-car-brand.error';
@@ -161,7 +161,7 @@ export class QuoteService {
     purchasePrice: number
   ): Promise<Premium> {
     if (ageOfDriver < MINIMUM_AGE) {
-      throw new DriveTooYoungError();
+      throw new DriverTooYoungError();
     }
 
     if (purchasePrice < MINIMUM_PURCHASE_PRICE) {
